@@ -1,18 +1,20 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "Next.js",
-  description:
-    "Beautifully designed components built with Radix UI and Tailwind CSS.",
+  name: "Careless Whisper",
+  description: "Using Whisper to transcribe the study sessions",
   mainNav: [
     {
       title: "Home",
       href: "/",
     },
+    {
+      title: "About",
+      href: "/",
+    },
+    {
+      title: "Guides",
+      href: "/",
+    },
   ],
-  links: {
-    twitter: "https://twitter.com/shadcn",
-    github: "https://github.com/shadcn/ui",
-    docs: "https://ui.shadcn.com",
-  },
 }
