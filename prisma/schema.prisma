@@ -20,6 +20,10 @@ model Sentence {
 
 model Transcription {
   id        Int       @id @default(autoincrement())
+  cohortName     String     
+  moduleName     String
+  syllabusLink   String
+  videoLink      String
   sentences Sentence[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
