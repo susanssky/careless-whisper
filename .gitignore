@@ -12,6 +12,9 @@ coverage
 .next/
 out/
 build
+data/
+docker-compose.yml
+prisma/migrations/
 
 # misc
 .DS_Store
