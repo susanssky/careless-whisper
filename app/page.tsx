@@ -19,7 +19,7 @@ export default function IndexPage() {
         <Link
           target="_blank"
           rel="noreferrer"
-          href="/transcription"
+          href="/display"
           className={buttonVariants({ variant: "secondary" })}
         > Login with GitHub
         </Link>

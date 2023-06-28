@@ -1,10 +1,37 @@
-import Image from "next/image"
-import Link from "next/link"
-import { prisma } from "@/lib/prisma"
+import Image from "next/image";
+import Link from "next/link";
+
+
+
+import { prisma } from "@/lib/prisma";
+
+
+
 
 
 export default async function Display() {
-  const posts: any = await prisma.post.findMany()
+ const posts = await prisma.post.findMany({
+   select: {
+     cohortName: true,
+     syllabusModuleName: true,
+     syllabusModuleLink: true,
+     originalVideoLink: true,
+     transcription: {
+       select: {
+         sentences: {
+           select: {
+             content: true,
+           },
+         },
+       },
+     },
+     viewsNum: true,
+     votesNum: true,
+   },
+ })
+
+
+
   return (
     <section className="container py-10">
       <div className="max-w-[980px] mx-auto flex items-center justify-between">
