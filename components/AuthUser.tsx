@@ -1,9 +1,9 @@
 "use client"
 
+import { GitHubLogoIcon } from "@radix-ui/react-icons"
 import { signOut, useSession } from "next-auth/react"
 
 import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/Icons"
 
 export default function AuthUser() {
   const { data: session } = useSession()
@@ -13,7 +13,7 @@ export default function AuthUser() {
     <div>
       {session && (
         <Button onClick={() => signOut({ callbackUrl: "/" })}>
-          <Icons.github className="mr-2 h-4 w-4" /> Sign Out
+          <GitHubLogoIcon className="mr-2 h-4 w-4" /> Sign Out
         </Button>
       )}
     </div>
