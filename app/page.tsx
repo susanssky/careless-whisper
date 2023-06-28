@@ -11,44 +11,49 @@ import { Button } from "@/components/ui/button"
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const session = useSession()
+  const { status } = useSession()
+  console.log(status)
+
   const router = useRouter()
   useEffect(() => {
-    setIsLoading(true)
-    if (session?.status === "authenticated") {
-      router.push("/dashboard")
+    switch (status) {
+      case "authenticated":
+        router.push("/dashboard")
+        break
+      case "loading":
+        setIsLoading(true)
+        break
+      default:
+        setIsLoading(false)
+        break
     }
-    setIsLoading(false)
-  }, [session, router])
+  }, [status, router])
+  if (isLoading) {
+    return (
+      <>
+        <UpdateIcon className="mr-2 h-4 w-4 animate-spin" /> Loading...
+      </>
+    )
+  }
   return (
-    <>
-      {isLoading && (
-        <div>
-          <UpdateIcon className="mr-2 h-4 w-4 animate-spin" />
-          Loading...
-        </div>
-      )}
-      {!isLoading && (
-        <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-          <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-            Careless Whisper
-          </h1>
-          <div className="flex max-w-[980px] flex-col items-center gap-8">
-            <h2 className="text-2xl font-bold">Login Page</h2>
-            <Image
-              src="/images/OIP.jpg"
-              alt="image related to cyf"
-              width={550}
-              height={550}
-            />
-            <Button variant="secondary" asChild>
-              <Link onClick={() => signIn("github")} href="/">
-                <GitHubLogoIcon className="mr-2 h-4 w-4" /> Login with GitHub
-              </Link>
-            </Button>
-          </div>
-        </section>
-      )}
-    </>
+    <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
+      <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+        Careless Whisper
+      </h1>
+      <div className="flex max-w-[980px] flex-col items-center gap-8">
+        <h2 className="text-2xl font-bold">Login Page</h2>
+        <Image
+          src="/images/OIP.jpg"
+          alt="image related to cyf"
+          width={550}
+          height={550}
+        />
+        <Button variant="secondary" asChild>
+          <Link onClick={() => signIn("github")} href="/">
+            <GitHubLogoIcon className="mr-2 h-4 w-4" /> Login with GitHub
+          </Link>
+        </Button>
+      </div>
+    </section>
   )
 }
