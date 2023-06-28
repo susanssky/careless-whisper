@@ -1,11 +1,10 @@
 import Image from "next/image"
 import Link from "next/link"
-
 import { prisma } from "@/lib/prisma"
-import { buttonVariants } from "@/components/ui/button"
 
-export default async function Page() {
-  const transcriptions: any = await prisma.transcription.findMany()
+
+export default async function Display() {
+  const posts: any = await prisma.post.findMany()
   return (
     <section className="container py-10">
       <div className="max-w-[980px] mx-auto flex items-center justify-between">
@@ -45,19 +44,19 @@ export default async function Page() {
             </tr>
           </thead>
           <tbody>
-            {transcriptions.map((transcription: any) => (
-              <tr key={transcription.id}>
-                <td className="py-2 px-4 border">{transcription.cohortName}</td>
-                <td className="py-2 px-4 border">{transcription.moduleName}</td>
+            {posts.map((post: any) => (
+              <tr key={post.id}>
+                <td className="py-2 px-4 border">{post.cohortName}</td>
+                <td className="py-2 px-4 border">{post.moduleName}</td>
                 <td className="py-2 px-4 border">
-                  {transcription.syllabusLink}
+                  {post.syllabusLink}
                 </td>
-                <td className="py-2 px-4 border">{transcription.videoLink}</td>
-                <td className="py-2 px-4 border">{transcription.sentences}</td>
+                <td className="py-2 px-4 border">{post.videoLink}</td>
+                <td className="py-2 px-4 border">{post.sentences}</td>
                 <td className="py-2 px-4 border">
-                  {transcription.numViews || 0}
+                  {post.numViews || 0}
                 </td>
-                <td className="py-2 px-4 border">{transcription.votes || 0}</td>
+                <td className="py-2 px-4 border">{post.votes || 0}</td>
               </tr>
             ))}
           </tbody>
