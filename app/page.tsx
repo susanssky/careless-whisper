@@ -9,13 +9,14 @@ import { signIn, useSession } from "next-auth/react"
 
 import { Button } from "@/components/ui/button"
 
-export const revalidate = 0
+export const revalidate = 1
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { status } = useSession()
 
   const router = useRouter()
   useEffect(() => {
+    setIsLoading(true)
     switch (status) {
       case "unauthenticated":
         router.push("/")
@@ -24,7 +25,6 @@ export default function LoginPage() {
         router.push("/dashboard")
         break
       case "loading":
-        setIsLoading(true)
         break
     }
     setIsLoading(false)

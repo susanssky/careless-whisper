@@ -1,3 +1,4 @@
+import { randomBytes, randomUUID } from "crypto"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { AuthOptions } from "next-auth"
 import GithubProvider from "next-auth/providers/github"
@@ -16,7 +17,12 @@ export const authOptions: AuthOptions = {
   session: {
     strategy: "jwt",
   },
-  debug: process.env.NODE_ENV === "development",
+  //   debug: process.env.NODE_ENV === "development",
+  pages: {
+    error: "/",
+    signIn: "/",
+    signOut: "/",
+  },
   callbacks: {
     async jwt({ token, user }) {
       //   token.role = "member"
@@ -24,7 +30,9 @@ export const authOptions: AuthOptions = {
       //   console.log(user)
       return { ...token, ...user }
     },
-    async session({ session, token }) {
+    async session({ session, token, user }) {
+      //   console.log(session)
+      //   console.log(token)
       //   console.log(user)
       session.user = token as any
       return session
