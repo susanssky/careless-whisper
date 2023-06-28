@@ -6,12 +6,11 @@ import { signOut, useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 
 export default function AuthUser() {
-  const { data: session } = useSession()
-  //   console.log(session)
+  const { data: session, status } = useSession()
 
   return (
     <div>
-      {session && (
+      {session && status === "authenticated" && (
         <Button onClick={() => signOut({ callbackUrl: "/" })}>
           <GitHubLogoIcon className="mr-2 h-4 w-4" /> Sign Out
         </Button>
