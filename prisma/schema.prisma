@@ -79,8 +79,9 @@ model Post {
   syllabusModuleName String
   syllabusModuleLink String
   originalVideoLink  String?
-  ViewsNum           Int           @default(0)
-  VotesNum           Int           @default(0)
+  duration           Int
+  viewsNum           Int           @default(0)
+  votesNum           Int           @default(0)
   user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String
   transcription      Transcription @relation(fields: [transcriptionId], references: [id], onDelete: Cascade)
