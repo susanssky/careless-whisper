@@ -56,18 +56,20 @@ model Account {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    role          Role?     @default(Trainee)
-    accounts      Account[]
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-    posts         Post[]
-    postId        Int?
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role?     @default(Trainee)
+  accounts      Account[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  posts         Post[]
+  postId        Int?
+  votes         Vote[]
 }
+
 
 enum Role {
     Trainee
