@@ -89,3 +89,16 @@ model Post {
     createdAt          DateTime      @default(now())
     updatedAt          DateTime      @updatedAt
 }
+
+model Vote {
+  id               Int          @id @default(autoincrement())
+  user             User         @relation(fields: [userId], references: [id])
+  userId           String
+  transcription    Transcription @relation(fields: [transcriptionId], references: [id])
+  transcriptionId  Int
+  rate             Int          
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@unique([userId, transcriptionId]) 
+}
