@@ -23,16 +23,17 @@ model Sentence {
 }
 
 model Transcription {
-    id         Int        @id @default(autoincrement())
-    sentences  Sentence[]
-    createdAt  DateTime   @default(now())
-    updatedAt  DateTime   @updatedAt
-    post       Post?
-    postId     Int        @unique
-    title      String?
-    keywords   String?
-    categories String?
-    speaker    String?
+  id               Int          @id @default(autoincrement())
+  sentences        Sentence[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  post             Post?
+  postId           Int          @unique
+  title            String?
+  keywords         String?
+  categories       String?
+  speaker          String?
+  votes            Vote[]
 }
 
 model Account {
