@@ -33,7 +33,7 @@ model Transcription {
   keywords         String?
   categories       String?
   speaker          String?
-  votes            Vote[]
+ 
 }
 
 model Account {
@@ -91,17 +91,18 @@ model Post {
     transcriptionId    Int           @unique
     createdAt          DateTime      @default(now())
     updatedAt          DateTime      @updatedAt
+    votes              Vote[]
 }
 
 model Vote {
   id               Int          @id @default(autoincrement())
   user             User         @relation(fields: [userId], references: [id])
   userId           String
-  transcription    Transcription @relation(fields: [transcriptionId], references: [id])
-  transcriptionId  Int
+  post   Post@relation(fields: [postId], references: [id])
+  postId           Int
   isPositive       Boolean      @default(true)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 
-  @@unique([userId, transcriptionId]) 
+  @@unique([userId, postId]) 
 }
