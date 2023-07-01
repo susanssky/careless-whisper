@@ -99,7 +99,7 @@ model Vote {
   userId           String
   transcription    Transcription @relation(fields: [transcriptionId], references: [id])
   transcriptionId  Int
-  rate             Int          
+  isPositive       Boolean      @default(true)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 
