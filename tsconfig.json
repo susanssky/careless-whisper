@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
+		"target": "esnext",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -13,9 +14,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "baseUrl": ".",
+		"downlevelIteration": true,
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+			"@lib": ["lib"],
+			"@lib/*": ["lib/*"],
+			"@config": ["config"],
+			"@config/*": ["config/*"],
+			"@components": ["components"],
+			"@components/*": ["components/*"]
     },
     "plugins": [
       {
