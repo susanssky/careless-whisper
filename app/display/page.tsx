@@ -1,36 +1,27 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from "next/image"
+import Link from "next/link"
 
-
-
-import { prisma } from "@/lib/prisma";
-
-
-
-
+import { prisma } from "@/lib/prisma"
 
 export default async function Display() {
- const posts = await prisma.post.findMany({
-   select: {
-     cohortName: true,
-     syllabusModuleName: true,
-     syllabusModuleLink: true,
-     originalVideoLink: true,
-     transcription: {
-       select: {
-         sentences: {
-           select: {
-             content: true,
-           },
-         },
-       },
-     },
-     viewsNum: true,
-     votesNum: true,
-   },
- })
-
-
+  const posts = await prisma.post.findMany({
+    select: {
+      cohort: true,
+      syllabus: true,
+      originalVideoLink: true,
+      transcription: {
+        select: {
+          sentences: {
+            select: {
+              content: true,
+            },
+          },
+        },
+      },
+      viewsNum: true,
+      votesNum: true,
+    },
+  })
 
   return (
     <section className="container py-10">
@@ -63,7 +54,6 @@ export default async function Display() {
             <tr>
               <th className="py-2 px-4 border">Cohort name</th>
               <th className="py-2 px-4 border">Syllabus module name</th>
-              <th className="py-2 px-4 border">Syllabus link</th>
               <th className="py-2 px-4 border">Original Video link</th>
               <th className="py-2 px-4 border">Transcript content</th>
               <th className="py-2 px-4 border">Number of Views</th>
@@ -75,14 +65,9 @@ export default async function Display() {
               <tr key={post.id}>
                 <td className="py-2 px-4 border">{post.cohortName}</td>
                 <td className="py-2 px-4 border">{post.moduleName}</td>
-                <td className="py-2 px-4 border">
-                  {post.syllabusLink}
-                </td>
                 <td className="py-2 px-4 border">{post.videoLink}</td>
                 <td className="py-2 px-4 border">{post.sentences}</td>
-                <td className="py-2 px-4 border">
-                  {post.numViews || 0}
-                </td>
+                <td className="py-2 px-4 border">{post.numViews || 0}</td>
                 <td className="py-2 px-4 border">{post.votes || 0}</td>
               </tr>
             ))}
