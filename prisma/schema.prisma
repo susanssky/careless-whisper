@@ -23,16 +23,12 @@ model Sentence {
 }
 
 model Transcription {
-    id         Int        @id @default(autoincrement())
-    sentences  Sentence[]
-    createdAt  DateTime   @default(now())
-    updatedAt  DateTime   @updatedAt
-    post       Post?
-    postId     Int        @unique
-    title      String?
-    keywords   String?
-    categories String?
-    speaker    String?
+    id        Int        @id @default(autoincrement())
+    sentences Sentence[]
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+    post      Post?      @relation(fields: [postId], references: [id])
+    postId    Int?       @unique
 }
 
 model Account {
@@ -74,18 +70,35 @@ enum Role {
 }
 
 model Post {
-    id                 Int           @id @default(autoincrement())
-    cohortName         String
-    syllabusModuleName String
-    syllabusModuleLink String
-    originalVideoLink  String?
-    duration           Int
-    viewsNum           Int           @default(0)
-    votesNum           Int           @default(0)
-    user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId             String
-    transcription      Transcription @relation(fields: [transcriptionId], references: [id], onDelete: Cascade)
-    transcriptionId    Int           @unique
-    createdAt          DateTime      @default(now())
-    updatedAt          DateTime      @updatedAt
+    id                Int            @id @default(autoincrement())
+    cohort            Cohort         @relation(fields: [cohortId], references: [id])
+    syllabus          Syllabus       @relation(fields: [syllabusId], references: [id])
+    syllabusId        Int
+    originalVideoLink String?
+    sessionName       String?
+    leaderName        String?
+    keywords          String?
+    duration          Int?           @default(0)
+    viewsNum          Int?           @default(0)
+    votesNum          Int?           @default(0)
+    user              User           @relation(fields: [userId], references: [id])
+    userId            String         @map("uploaderId")
+    createdAt         DateTime       @default(now())
+    updatedAt         DateTime       @updatedAt
+    cohortId          Int
+    transcriptionId   Int?           @unique
+    transcription     Transcription?
+}
+
+model Cohort {
+    id   Int    @id @default(autoincrement())
+    name String @unique
+    post Post[]
+}
+
+model Syllabus {
+    id   Int     @id @default(autoincrement())
+    name String  @unique
+    link String? @unique
+    post Post[]
 }

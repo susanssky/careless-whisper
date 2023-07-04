@@ -16,6 +16,7 @@ build
 data/
 docker-compose.yml
 prisma/migrations/
+.DS_Store
 
 
 # misc
