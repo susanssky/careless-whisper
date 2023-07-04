@@ -48,6 +48,8 @@ import {
 } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 
 const cohortsName = [
   {
@@ -69,6 +71,7 @@ const syllabusesName = [
 ]
 
 export default function CreatePost() {
+  const { toast } = useToast()
   const { data: session } = useSession()
   const [data, setData] = useState<createPostType>({
     cohortName: { open: false, value: "" },
@@ -95,7 +98,7 @@ export default function CreatePost() {
     // console.log(transcription)
   }
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return
     const file = event.target.files[0]
     const reader = new FileReader()
@@ -124,7 +127,7 @@ export default function CreatePost() {
       transcription,
     } = data
 
-    const res = await fetch("http://localhost:3000/api/create-post", {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/post`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -139,9 +142,19 @@ export default function CreatePost() {
         user: session?.user,
       }),
     })
-
+    console.log({
+      cohortName,
+      syllabusName,
+      sessionName,
+      leaderName,
+      originalVideoLink,
+      transcription,
+      user: session?.user,
+    })
+    // console.log(res.ok)
     const result = await res.json()
     // console.log(result)
+    return result
   }
   return (
     <div>
@@ -380,7 +393,17 @@ export default function CreatePost() {
                   />
                 </div>
               </TabsContent>
-              <Button type="submit" className="w-full">
+              <Button
+                type="submit"
+                className="w-full"
+                onClick={() => {
+                  toast({
+                    title: "Congratulations.",
+                    description: "You have send a new transcription",
+                    action: <ToastAction altText="Close">Close</ToastAction>,
+                  })
+                }}
+              >
                 Submit
               </Button>
             </Tabs>

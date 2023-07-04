@@ -9,7 +9,7 @@ import { signIn, useSession } from "next-auth/react"
 
 import { Button } from "@/components/ui/button"
 
-export const revalidate = 1
+// export const revalidate = 1
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { status } = useSession()

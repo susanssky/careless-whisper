@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 interface RootLayoutProps {
   children: React.ReactNode
 }
-
+export const dynamic = "force-dynamic"
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
