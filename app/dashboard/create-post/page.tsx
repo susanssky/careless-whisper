@@ -1,8 +1,8 @@
 "use client"
 
-import React, { ChangeEvent, FormEvent, useState } from "react"
+import React, { ChangeEvent, FormEvent, useRef, useState } from "react"
 //----left card------
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
+import { CaretSortIcon, CheckIcon, UpdateIcon } from "@radix-ui/react-icons"
 import { useSession } from "next-auth/react"
 
 import { cn } from "@/lib/utils"
@@ -71,8 +71,10 @@ const syllabusesName = [
 ]
 
 export default function CreatePost() {
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
   const { toast } = useToast()
   const { data: session } = useSession()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [data, setData] = useState<createPostType>({
     cohortName: { open: false, value: "" },
     syllabusName: { open: false, value: "" },
@@ -85,7 +87,7 @@ export default function CreatePost() {
     const regex =
       /(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})\n([\s\S]*?)(?=\n\n|$)/g
     let match
-    const transcription: transcriptionType = []
+    const transcription: createSentenceType[] = []
     while ((match = regex.exec(contents))) {
       transcription.push({
         lineNumber: match[1],
@@ -116,8 +118,7 @@ export default function CreatePost() {
       [e.target.name]: e.target.value,
     }))
   }
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+  const validateForm = (data: createPostType) => {
     const {
       cohortName: { value: cohortName },
       syllabusName: { value: syllabusName },
@@ -126,6 +127,51 @@ export default function CreatePost() {
       originalVideoLink,
       transcription,
     } = data
+
+    if (
+      !cohortName ||
+      !syllabusName ||
+      !sessionName ||
+      !leaderName ||
+      transcription.length <= 0
+    ) {
+      return false
+    }
+    return true
+  }
+
+  const toastSuccess = () => {
+    toast({
+      title: "Congratulations.",
+      description: "You have sent a new transcription",
+      action: <ToastAction altText="Close">Close</ToastAction>,
+    })
+  }
+  const toastFail = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description:
+        "You have to fill out cohort, syllabus, session, leader and upload valid srt file.",
+      action: <ToastAction altText="Try again">Try again</ToastAction>,
+    })
+  }
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    const {
+      cohortName: { value: cohortName },
+      syllabusName: { value: syllabusName },
+      sessionName,
+      leaderName,
+      originalVideoLink,
+      transcription,
+    } = data
+    if (!validateForm(data)) {
+      setIsLoading(false)
+      return
+    }
 
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/post`, {
       method: "POST",
@@ -142,68 +188,40 @@ export default function CreatePost() {
         user: session?.user,
       }),
     })
-    console.log({
-      cohortName,
-      syllabusName,
-      sessionName,
-      leaderName,
-      originalVideoLink,
-      transcription,
-      user: session?.user,
-    })
+    if (!res.ok) {
+      setIsLoading(false)
+      return
+    }
+    // console.log({
+    //   cohortName,
+    //   syllabusName,
+    //   sessionName,
+    //   leaderName,
+    //   originalVideoLink,
+    //   transcription,
+    //   user: session?.user,
+    // })
     // console.log(res.ok)
     const result = await res.json()
+    setData({
+      cohortName: { open: false, value: "" },
+      syllabusName: { open: false, value: "" },
+      sessionName: "",
+      leaderName: "",
+      originalVideoLink: "",
+      transcription: [],
+    })
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+    setIsLoading(false)
     // console.log(result)
     return result
   }
   return (
-    <div>
-      {data.transcription.length > 0 && (
-        <Accordion
-          type="single"
-          defaultValue="transcription-item-1"
-          collapsible
-        >
-          <AccordionItem value="transcription-item-1">
-            <AccordionTrigger>Click here to toggle preview.</AccordionTrigger>
-            <AccordionContent>
-              <ScrollArea className="h-[300px] rounded-md border p-4">
-                <Table>
-                  <TableCaption>You have reached the last line.</TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-center">id</TableHead>
-                      <TableHead className="text-center">Start Time</TableHead>
-                      <TableHead className="text-center">End Time</TableHead>
-                      <TableHead className="text-center">Sentence</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.transcription.map((sentence) => (
-                      <TableRow key={sentence.lineNumber}>
-                        <TableCell className="font-medium text-center">
-                          {sentence.lineNumber}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {sentence.startTime}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {sentence.endTime}
-                        </TableCell>
-                        <TableCell className="text-left">
-                          {sentence.content}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      )}
+    <div className="flex max-md:flex-col max-md:items-center">
       <form onSubmit={handleSubmit}>
-        <Card className="w-[400px]">
+        <Card className="w-[350px] max-md:w-[400px]">
           <CardHeader>
             <CardTitle>Create post</CardTitle>
             <CardDescription>
@@ -374,7 +392,9 @@ export default function CreatePost() {
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="whisper">Please upload .srt file</Label>
                   <Input
+                    ref={fileInputRef}
                     id="whisper"
+                    name="whisper"
                     type="file"
                     accept=".srt"
                     onChange={handleFileUpload}
@@ -388,28 +408,77 @@ export default function CreatePost() {
                   </Label>
                   <Textarea
                     id="whisper-jax"
+                    name="whisper-jax"
                     placeholder="Paste here from Huggingface."
                     className="resize-none"
                   />
                 </div>
               </TabsContent>
-              <Button
-                type="submit"
-                className="w-full"
-                onClick={() => {
-                  toast({
-                    title: "Congratulations.",
-                    description: "You have send a new transcription",
-                    action: <ToastAction altText="Close">Close</ToastAction>,
-                  })
-                }}
-              >
-                Submit
-              </Button>
+              {isLoading && (
+                <Button disabled className="w-full">
+                  <UpdateIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </Button>
+              )}
+              {!isLoading && (
+                <Button
+                  type="submit"
+                  className="w-full"
+                  onClick={() =>
+                    validateForm(data) ? toastSuccess() : toastFail()
+                  }
+                >
+                  Submit
+                </Button>
+              )}
             </Tabs>
           </CardFooter>
         </Card>
       </form>
+      {data.transcription.length > 0 && (
+        <Accordion
+          type="single"
+          defaultValue="transcription-item-1"
+          collapsible
+        >
+          <AccordionItem value="transcription-item-1">
+            <AccordionTrigger>Click here to toggle preview.</AccordionTrigger>
+            <AccordionContent>
+              <ScrollArea className="h-[600px]  rounded-md border p-4">
+                <Table>
+                  <TableCaption>You have reached the last line.</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-center">id</TableHead>
+                      <TableHead className="text-center">Start Time</TableHead>
+                      <TableHead className="text-center">End Time</TableHead>
+                      <TableHead className="text-center">Sentence</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {data.transcription.map((sentence) => (
+                      <TableRow key={sentence.lineNumber}>
+                        <TableCell className="font-medium text-center">
+                          {sentence.lineNumber}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {sentence.startTime}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {sentence.endTime}
+                        </TableCell>
+                        <TableCell className="text-left">
+                          {sentence.content}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      )}
     </div>
   )
 }
