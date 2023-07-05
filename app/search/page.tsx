@@ -38,9 +38,10 @@ const SearchPage = () => {
     return <Spinner />
   }
 
-  if (!data?.length) {
-    return null
+  if (!data || data.length === 0) {
+    return <div>No results found for: {searchQuery}</div>;
   }
+
 
   return (
     <>
