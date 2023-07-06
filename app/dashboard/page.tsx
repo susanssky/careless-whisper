@@ -1,11 +1,11 @@
 import Image from "next/image"
-import Link from "next/link"
 
 import getAllPosts from "@/lib/getAllPosts"
+import DashboardTableTr from "@/components/dashboard/TableTr"
 import UserSession from "@/components/dashboard/UserSession"
 
 export default async function Dashboard() {
-  const postsData = getAllPosts()
+  const postsData: Promise<PostType[]> = getAllPosts()
   const posts = await postsData
 
   return (
@@ -18,8 +18,8 @@ export default async function Dashboard() {
         <Image
           src="/images/img2.jpg"
           alt="image related to cyf"
-          width={350}
-          height={350}
+          width={200}
+          height={200}
           className="rounded"
         />
       </div>
@@ -27,27 +27,21 @@ export default async function Dashboard() {
         <h2 className="text-2xl font-bold text-center mt-8 mb-4 text-red-500">
           List of transcripts
         </h2>
-        <table className="w-full border-collapse">
+
+        <table className="w-full border-collapse text-center">
           <thead>
             <tr>
-              <th className="py-2 px-4 border">Cohort name</th>
-              <th className="py-2 px-4 border">Syllabus module name</th>
-              <th className="py-2 px-4 border">Session name</th>
-              <th className="py-2 px-4 border">Leader name</th>
-              <th className="py-2 px-4 border">Number of Views</th>
+              <th className="py-2 px-4 border">Cohort</th>
+              <th className="py-2 px-4 border">Syllabus</th>
+              <th className="py-2 px-4 border">Session</th>
+              <th className="py-2 px-4 border">Leader</th>
+              <th className="py-2 px-4 border">Views</th>
               <th className="py-2 px-4 border">Votes</th>
             </tr>
           </thead>
           <tbody>
-            {posts.map((post: any) => (
-              <tr key={post.id}>
-                <td className="py-2 px-4 border">{post.cohort.name}</td>
-                <td className="py-2 px-4 border">{post.syllabus.name}</td>
-                <td className="py-2 px-4 border">{post.sessionName}</td>
-                <td className="py-2 px-4 border">{post.leaderName}</td>
-                <td className="py-2 px-4 border">{post.viewsNum}</td>
-                <td className="py-2 px-4 border">{post.votesNum}</td>
-              </tr>
+            {posts.map((post) => (
+              <DashboardTableTr post={post} />
             ))}
           </tbody>
         </table>

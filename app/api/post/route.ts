@@ -3,26 +3,6 @@ import { NextResponse, type NextRequest } from "next/server"
 
 import { prisma } from "@/lib/prisma"
 
-export async function GET() {
-  const getAllPosts = await prisma.post.findMany({
-    select: {
-      id: true,
-      originalVideoLink: true,
-      sessionName: true,
-      leaderName: true,
-      duration: true,
-      viewsNum: true,
-      votesNum: true,
-      syllabus: { select: { name: true } },
-      cohort: { select: { name: true } },
-      user: { select: { name: true } },
-      transcription: { select: { sentences: { select: { content: true } } } },
-    },
-  })
-  revalidatePath("/")
-  return NextResponse.json(getAllPosts)
-}
-
 export async function POST(request: NextRequest) {
   const body: createPostFromClientType = await request.json()
   const {
