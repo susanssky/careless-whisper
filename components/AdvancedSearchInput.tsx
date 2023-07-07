@@ -84,7 +84,7 @@ const AdvancedSearchInput = () => {
             value={category}
             onChange={(event) => setCategory(event.target.value)}
             className="input-field"
-            placeholder="Category"
+            placeholder="Cohort"
             onKeyPress={handleKeyPress}
           />
 
