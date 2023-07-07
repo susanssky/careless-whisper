@@ -51,6 +51,8 @@ const AdvancedSearchPage = () => {
     return <Spinner />
   }
 
+  
+
   const submittedParams = {
     User: searchUser,
     Keywords: searchKeyword,
@@ -72,11 +74,17 @@ const AdvancedSearchPage = () => {
     }
   )
 
+  if (!data || data.length === 0) {
+    return <div>
+      No results found for: {displayedParams}
+      </div>
+  }
+
   return (
     <>
       <span className="text-xl">Showing results for:</span>
       <ul>{displayedParams}</ul>
-      {data && <Sentences sentences={data} />} {/* Add conditional check */}
+      {data && <Sentences sentences={data} />} 
     </>
   )
 }
