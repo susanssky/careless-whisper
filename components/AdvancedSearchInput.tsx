@@ -46,7 +46,7 @@ const AdvancedSearchInput = () => {
     <>  {!showInputs && (
         <button
           onClick={toggleInputs}
-          className="px-5 py-1 w-2/3 sm:px-5 sm:py-3 flex-1 text-zinc-200 bg-zinc-800 focus:bg-black rounded-full focus:outline-none focus:ring-[1px] focus:ring-green-700 placeholder:text-zinc-400"
+          className="px-5 py-1 w-1/7 sm:px-5 sm:py-3 flex-1 text-zinc-200 bg-zinc-800 focus:bg-black rounded-full focus:outline-none focus:ring-[1px] focus:ring-green-700 placeholder:text-zinc-400"
         >
           Advanced Search
         </button>
@@ -84,7 +84,7 @@ const AdvancedSearchInput = () => {
             value={category}
             onChange={(event) => setCategory(event.target.value)}
             className="input-field"
-            placeholder="Cohort"
+            placeholder="Category"
             onKeyPress={handleKeyPress}
           />
 
