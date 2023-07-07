@@ -4,12 +4,15 @@ import Link from "next/link"
 import getAllPosts from "@/lib/getAllPosts"
 import UserSession from "@/components/dashboard/UserSession"
 
+import SearchInput from "@/components/SearchInput"
+
 export default async function Dashboard() {
   const postsData = getAllPosts()
   const posts = await postsData
 
   return (
     <section className="container py-10">
+      <SearchInput/>
       <UserSession />
       <div className="max-w-[980px] mx-auto flex items-center justify-between">
         <h1 className="text-3xl font-extrabold">Transcription</h1>
