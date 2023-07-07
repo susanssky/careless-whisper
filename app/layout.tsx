@@ -13,7 +13,6 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import AuthProvider from "@/components/AuthProvider";
-import SearchInput from "@/components/SearchInput";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TailwindIndicator } from "@/components/TailwindIndicator"
 import { ThemeProvider } from "@/components/ThemeProvider"
@@ -58,7 +57,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
               <div className="relative flex min-h-screen flex-col">
                 <SiteHeader />
-                <SearchInput/>
+                
                 <div className="flex-1">{children}</div>
               </div>
               <TailwindIndicator />
