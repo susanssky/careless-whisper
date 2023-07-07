@@ -5,11 +5,11 @@ import { getAllPosts } from "@/lib/helpers"
 import DashboardTableTr from "@/components/dashboard/TableTr"
 import UserSession from "@/components/dashboard/UserSession"
 
+export const revalidate = 1
 export default async function Dashboard() {
   const postsData: Promise<PostType[]> = getAllPosts()
   const _posts = await postsData
   const posts = _posts.sort((a, b) => a.id - b.id)
-  // revalidatePath("/")
 
   return (
     <section className="container py-10">

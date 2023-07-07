@@ -82,8 +82,8 @@ export default function CreatePost() {
     sessionName: "",
     leaderName: "",
     originalVideoLink: "",
+    summary: "",
     transcription: [],
-    summaried: "",
   })
   const parseSrtFile = (contents: string) => {
     const regex =
@@ -119,6 +119,8 @@ export default function CreatePost() {
       ...prevData,
       [e.target.name]: e.target.value,
     }))
+    console.log(data)
+    console.log(summaryState)
   }
   const validateForm = (data: createPostType) => {
     const {
@@ -126,7 +128,6 @@ export default function CreatePost() {
       syllabusName: { value: syllabusName },
       sessionName,
       leaderName,
-      originalVideoLink,
       transcription,
     } = data
 
@@ -153,8 +154,9 @@ export default function CreatePost() {
     toast({
       variant: "destructive",
       title: "Uh oh! Something went wrong.",
-      description:
-        "You have to fill out cohort, syllabus, session, leader and upload valid srt file.",
+      description: summaryState.errorMsg
+        ? "Please clear API Key"
+        : "You have to fill out cohort, syllabus, session, leader and upload valid srt file.",
       action: <ToastAction altText="Try again">Try again</ToastAction>,
     })
   }
@@ -162,70 +164,72 @@ export default function CreatePost() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    const {
-      cohortName: { value: cohortName },
-      syllabusName: { value: syllabusName },
-      sessionName,
-      leaderName,
-      originalVideoLink,
-      transcription,
-    } = data
-    if (!validateForm(data)) {
-      setIsLoading(false)
-      return
-    }
+    try {
+      if (!validateForm(data) || summaryState.errorMsg) {
+        return
+      }
 
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/post`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        cohortName,
-        syllabusName,
+      const {
+        cohortName: { value: cohortName },
+        syllabusName: { value: syllabusName },
         sessionName,
         leaderName,
         originalVideoLink,
         transcription,
-        user: session?.user,
-      }),
-    })
-    if (!res.ok) {
-      setIsLoading(false)
-      return
-    }
-    // console.log({
-    //   cohortName,
-    //   syllabusName,
-    //   sessionName,
-    //   leaderName,
-    //   originalVideoLink,
-    //   transcription,
-    //   user: session?.user,
-    // })
-    // console.log(res.ok)
-    const result = await res.json()
-    setData({
-      cohortName: { open: false, value: "" },
-      syllabusName: { open: false, value: "" },
-      sessionName: "",
-      leaderName: "",
-      originalVideoLink: "",
-      transcription: [],
-      summaried: "",
-    })
-    setSummaryState({ apiKey: "", errorMsg: "", isLoading: false })
+        summary,
+      } = data
+      // console.log(data)
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+      const res = await fetch(`${process.env.NEXTAUTH_URL}/api/post`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cohortName,
+          syllabusName,
+          sessionName,
+          leaderName,
+          originalVideoLink,
+          transcription,
+          user: session?.user,
+          summary,
+        }),
+      })
+      if (!res.ok) {
+        return
+      }
+
+      const result = await res.json()
+
+      setData({
+        cohortName: { open: false, value: "" },
+        syllabusName: { open: false, value: "" },
+        sessionName: "",
+        leaderName: "",
+        originalVideoLink: "",
+        transcription: [],
+        summary: "",
+      })
+      setSummaryState({ apiKey: "", errorMsg: "", isLoading: false })
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+
+      console.log(result)
+      return result
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
-    // console.log(result)
-    return result
   }
 
   const generateSummary = async (e: FormEvent) => {
+    e.preventDefault()
     if (data.transcription.length <= 0) return
+    setSummaryState((prev) => ({ ...prev, isLoading: true }))
     setIsLoading(true)
     // const res = await getSummary(article)
 
@@ -240,8 +244,8 @@ export default function CreatePost() {
       setSummaryState((prev) => ({ ...prev, errorMsg: "" }))
       const res = await openai.createCompletion({
         model: "text-davinci-003",
-        prompt: `Summarize this ${article}.`,
-        // prompt: `Summarize this in five lines ${article}. and break them into seperate lines`,
+        prompt: `Summarise this ${article}.`,
+        // prompt: `Summarise this in five lines ${article}. and break them into seperate lines`,
         temperature: 0.6,
         max_tokens: 60,
         top_p: 1.0,
@@ -252,7 +256,7 @@ export default function CreatePost() {
 
       if (res.status === 200) {
         const summary = res?.data?.choices[0]?.text as string
-        setData((prev) => ({ ...prev, summaried: summary.replace(/\n/g, "") }))
+        setData((prev) => ({ ...prev, summary: summary.replace(/\n/g, "") }))
       }
     } catch (error: any) {
       // console.error({ error })
@@ -261,6 +265,7 @@ export default function CreatePost() {
         errorMsg: error.response.data.error.message,
       }))
     } finally {
+      setSummaryState((prev) => ({ ...prev, isLoading: false }))
       setIsLoading(false)
     }
   }
@@ -438,19 +443,27 @@ export default function CreatePost() {
                 <Input
                   id="apiKey"
                   name="apiKey"
+                  autoComplete="off"
                   value={summaryState.apiKey}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setSummaryState((prev) => ({
                       ...prev,
+                      errorMsg: "",
                       apiKey: e.target.value,
                     }))
-                  }
+                    if (summaryState.apiKey.length <= 0) {
+                      setData((prev) => ({
+                        ...prev,
+                        summary: "",
+                      }))
+                    }
+                  }}
                 />
               </div>
               <Tabs defaultValue="whisper" className="w-full">
                 <TabsList className="flex justify-center">
                   <TabsTrigger value="whisper">Whisper</TabsTrigger>
-                  <TabsTrigger value="whisper-jax">Whisper JAX</TabsTrigger>
+                  {/* <TabsTrigger value="whisper-jax">Whisper JAX</TabsTrigger> */}
                 </TabsList>
 
                 <TabsContent value="whisper">
@@ -469,7 +482,7 @@ export default function CreatePost() {
                     />
                   </div>
                 </TabsContent>
-                <TabsContent value="whisper-jax">
+                {/* <TabsContent value="whisper-jax">
                   <div className="grid w-full gap-1.5">
                     <Label htmlFor="whisper-jax">
                       Please paste below with timestamp
@@ -481,28 +494,34 @@ export default function CreatePost() {
                       className="resize-none"
                     />
                   </div>
-                </TabsContent>
+                </TabsContent> */}
               </Tabs>
               {summaryState.apiKey && data.transcription.length > 0 && (
                 <div className="grid w-full gap-1.5">
-                  <Label htmlFor="summary">Summary</Label>
+                  <Label htmlFor="summary">OpenAI Summary</Label>
                   <Textarea
                     className="resize-none"
                     placeholder="A summary will be generated here."
                     id="summary"
+                    name="summary"
                     rows={10}
-                    value={data.summaried}
-                    onChange={(e) =>
-                      setData((prev) => ({
-                        ...prev,
-                        summaried: e.target.value,
-                      }))
-                    }
+                    value={data.summary}
+                    onChange={handleChange}
                   />
                   <p className="text-sm text-rose-600">
                     {summaryState.errorMsg}
                   </p>
-                  <Button>Generate the summary</Button>
+                  {!summaryState.isLoading && (
+                    <Button onClick={(e) => generateSummary(e)}>
+                      Generate the summary
+                    </Button>
+                  )}
+                  {summaryState.isLoading && (
+                    <Button disabled className="w-full">
+                      <UpdateIcon className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
@@ -519,7 +538,9 @@ export default function CreatePost() {
                 type="submit"
                 className="w-full"
                 onClick={() =>
-                  validateForm(data) ? toastSuccess() : toastFail()
+                  validateForm(data) && !summaryState.errorMsg
+                    ? toastSuccess()
+                    : toastFail()
                 }
               >
                 Submit
