@@ -9,7 +9,7 @@ export default async function Dashboard() {
   const postsData: Promise<PostType[]> = getAllPosts()
   const _posts = await postsData
   const posts = _posts.sort((a, b) => a.id - b.id)
-  revalidatePath("/")
+  // revalidatePath("/")
 
   return (
     <section className="container py-10">

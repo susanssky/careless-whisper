@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
     originalVideoLink,
     transcription,
     user,
+    summaried,
   } = body
   // console.log(body)
 
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
       originalVideoLink,
       sessionName,
       leaderName,
+      summary: summaried,
       user: { connect: { id: user.id } },
       transcription: {
         create: {

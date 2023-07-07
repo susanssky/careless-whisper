@@ -14,6 +14,7 @@ type commonFields = {
   leaderName: string
   originalVideoLink?: string
   transcription: createSentenceType[]
+  summaried?: string
 }
 
 type createPostType = commonFields & {

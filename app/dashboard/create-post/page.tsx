@@ -4,6 +4,7 @@ import React, { ChangeEvent, FormEvent, useRef, useState } from "react"
 //----left card------
 import { CaretSortIcon, CheckIcon, UpdateIcon } from "@radix-ui/react-icons"
 import { useSession } from "next-auth/react"
+import { Configuration, OpenAIApi } from "openai"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -69,6 +70,12 @@ export default function CreatePost() {
   const { toast } = useToast()
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [summaryState, setSummaryState] = useState({
+    apiKey: "",
+    isLoading: false,
+    errorMsg: "",
+  })
+
   const [data, setData] = useState<createPostType>({
     cohortName: { open: false, value: "" },
     syllabusName: { open: false, value: "" },
@@ -76,6 +83,7 @@ export default function CreatePost() {
     leaderName: "",
     originalVideoLink: "",
     transcription: [],
+    summaried: "",
   })
   const parseSrtFile = (contents: string) => {
     const regex =
@@ -204,13 +212,57 @@ export default function CreatePost() {
       leaderName: "",
       originalVideoLink: "",
       transcription: [],
+      summaried: "",
     })
+    setSummaryState({ apiKey: "", errorMsg: "", isLoading: false })
+
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
     setIsLoading(false)
     // console.log(result)
     return result
+  }
+
+  const generateSummary = async (e: FormEvent) => {
+    if (data.transcription.length <= 0) return
+    setIsLoading(true)
+    // const res = await getSummary(article)
+
+    const configuration = new Configuration({
+      apiKey: summaryState.apiKey,
+    })
+    const openai = new OpenAIApi(configuration)
+    const article = data.transcription
+      .map((sentence: { content: string }) => sentence.content)
+      .join(" ")
+    try {
+      setSummaryState((prev) => ({ ...prev, errorMsg: "" }))
+      const res = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: `Summarize this ${article}.`,
+        // prompt: `Summarize this in five lines ${article}. and break them into seperate lines`,
+        temperature: 0.6,
+        max_tokens: 60,
+        top_p: 1.0,
+        // frequency_penalty: 0.0,
+        presence_penalty: 1,
+      })
+      // ;
+
+      if (res.status === 200) {
+        const summary = res?.data?.choices[0]?.text as string
+        setData((prev) => ({ ...prev, summaried: summary.replace(/\n/g, "") }))
+      }
+    } catch (error: any) {
+      // console.error({ error })
+      setSummaryState((prev) => ({
+        ...prev,
+        errorMsg: error.response.data.error.message,
+      }))
+    } finally {
+      setIsLoading(false)
+    }
   }
   return (
     <div className="flex max-md:flex-col max-md:items-center">
@@ -225,7 +277,9 @@ export default function CreatePost() {
           <CardContent>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="cohort-name">Cohort Name</Label>
+                <Label htmlFor="cohort-name">
+                  Cohort Name<span className="text-rose-600">*</span>
+                </Label>
                 <Popover
                   open={data.cohortName.open}
                   onOpenChange={(open) =>
@@ -286,7 +340,9 @@ export default function CreatePost() {
                 </Popover>
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="syllabus-name">Syllabus Name</Label>
+                <Label htmlFor="syllabus-name">
+                  Syllabus Name<span className="text-rose-600">*</span>
+                </Label>
                 <Popover
                   open={data.syllabusName.open}
                   onOpenChange={(open) =>
@@ -347,7 +403,9 @@ export default function CreatePost() {
                 </Popover>
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="sessionName">Session Name</Label>
+                <Label htmlFor="sessionName">
+                  Session Name<span className="text-rose-600">*</span>
+                </Label>
                 <Input
                   id="sessionName"
                   name="sessionName"
@@ -356,7 +414,9 @@ export default function CreatePost() {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="leaderName">Leader Name</Label>
+                <Label htmlFor="leaderName">
+                  Leader Name<span className="text-rose-600">*</span>
+                </Label>
                 <Input
                   id="leaderName"
                   name="leaderName"
@@ -373,59 +433,98 @@ export default function CreatePost() {
                   onChange={handleChange}
                 />
               </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="apiKey">OpenAI API Key</Label>
+                <Input
+                  id="apiKey"
+                  name="apiKey"
+                  value={summaryState.apiKey}
+                  onChange={(e) =>
+                    setSummaryState((prev) => ({
+                      ...prev,
+                      apiKey: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <Tabs defaultValue="whisper" className="w-full">
+                <TabsList className="flex justify-center">
+                  <TabsTrigger value="whisper">Whisper</TabsTrigger>
+                  <TabsTrigger value="whisper-jax">Whisper JAX</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="whisper">
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="whisper">
+                      Please upload .srt file
+                      <span className="text-rose-600">*</span>
+                    </Label>
+                    <Input
+                      ref={fileInputRef}
+                      id="whisper"
+                      name="whisper"
+                      type="file"
+                      accept=".srt"
+                      onChange={handleFileUpload}
+                    />
+                  </div>
+                </TabsContent>
+                <TabsContent value="whisper-jax">
+                  <div className="grid w-full gap-1.5">
+                    <Label htmlFor="whisper-jax">
+                      Please paste below with timestamp
+                    </Label>
+                    <Textarea
+                      id="whisper-jax"
+                      name="whisper-jax"
+                      placeholder="Paste here from Huggingface."
+                      className="resize-none"
+                    />
+                  </div>
+                </TabsContent>
+              </Tabs>
+              {summaryState.apiKey && data.transcription.length > 0 && (
+                <div className="grid w-full gap-1.5">
+                  <Label htmlFor="summary">Summary</Label>
+                  <Textarea
+                    className="resize-none"
+                    placeholder="A summary will be generated here."
+                    id="summary"
+                    rows={10}
+                    value={data.summaried}
+                    onChange={(e) =>
+                      setData((prev) => ({
+                        ...prev,
+                        summaried: e.target.value,
+                      }))
+                    }
+                  />
+                  <p className="text-sm text-rose-600">
+                    {summaryState.errorMsg}
+                  </p>
+                  <Button>Generate the summary</Button>
+                </div>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Tabs defaultValue="whisper" className="w-full">
-              <TabsList className="flex justify-center">
-                <TabsTrigger value="whisper">Whisper</TabsTrigger>
-                <TabsTrigger value="whisper-jax">Whisper JAX</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="whisper">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="whisper">Please upload .srt file</Label>
-                  <Input
-                    ref={fileInputRef}
-                    id="whisper"
-                    name="whisper"
-                    type="file"
-                    accept=".srt"
-                    onChange={handleFileUpload}
-                  />
-                </div>
-              </TabsContent>
-              <TabsContent value="whisper-jax">
-                <div className="grid w-full gap-1.5">
-                  <Label htmlFor="whisper-jax">
-                    Please paste below with timestamp
-                  </Label>
-                  <Textarea
-                    id="whisper-jax"
-                    name="whisper-jax"
-                    placeholder="Paste here from Huggingface."
-                    className="resize-none"
-                  />
-                </div>
-              </TabsContent>
-              {isLoading && (
-                <Button disabled className="w-full">
-                  <UpdateIcon className="mr-2 h-4 w-4 animate-spin" />
-                  Please wait
-                </Button>
-              )}
-              {!isLoading && (
-                <Button
-                  type="submit"
-                  className="w-full"
-                  onClick={() =>
-                    validateForm(data) ? toastSuccess() : toastFail()
-                  }
-                >
-                  Submit
-                </Button>
-              )}
-            </Tabs>
+            {isLoading && (
+              <Button disabled className="w-full">
+                <UpdateIcon className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>
+            )}
+            {!isLoading && (
+              <Button
+                type="submit"
+                className="w-full"
+                onClick={() =>
+                  validateForm(data) ? toastSuccess() : toastFail()
+                }
+              >
+                Submit
+              </Button>
+            )}
           </CardFooter>
         </Card>
       </form>
