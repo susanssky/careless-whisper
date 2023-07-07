@@ -6,12 +6,6 @@ import { CaretSortIcon, CheckIcon, UpdateIcon } from "@radix-ui/react-icons"
 import { useSession } from "next-auth/react"
 
 import { cn } from "@/lib/utils"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -436,48 +430,37 @@ export default function CreatePost() {
         </Card>
       </form>
       {data.transcription.length > 0 && (
-        <Accordion
-          type="single"
-          defaultValue="transcription-item-1"
-          collapsible
-        >
-          <AccordionItem value="transcription-item-1">
-            <AccordionTrigger>Click here to toggle preview.</AccordionTrigger>
-            <AccordionContent>
-              <ScrollArea className="h-[600px]  rounded-md border p-4">
-                <Table>
-                  <TableCaption>You have reached the last line.</TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-center">id</TableHead>
-                      <TableHead className="text-center">Start Time</TableHead>
-                      <TableHead className="text-center">End Time</TableHead>
-                      <TableHead className="text-center">Sentence</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.transcription.map((sentence) => (
-                      <TableRow key={sentence.lineNumber}>
-                        <TableCell className="font-medium text-center">
-                          {sentence.lineNumber}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {sentence.startTime}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {sentence.endTime}
-                        </TableCell>
-                        <TableCell className="text-left">
-                          {sentence.content}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <ScrollArea className="h-[600px]  rounded-md border p-4">
+          <Table>
+            <TableCaption>You have reached the last line.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-center">id</TableHead>
+                <TableHead className="text-center">Start Time</TableHead>
+                <TableHead className="text-center">End Time</TableHead>
+                <TableHead className="text-center">Sentence</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.transcription.map((sentence) => (
+                <TableRow key={sentence.lineNumber}>
+                  <TableCell className="font-medium text-center">
+                    {sentence.lineNumber}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {sentence.startTime}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {sentence.endTime}
+                  </TableCell>
+                  <TableCell className="text-left">
+                    {sentence.content}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </ScrollArea>
       )}
     </div>
   )

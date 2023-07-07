@@ -48,6 +48,7 @@ type PostType = {
       content: string
     }[]
   }
+  summary: string
 }
 type DashboardTableTrPropsType = {
   post: PostType

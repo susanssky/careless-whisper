@@ -2,7 +2,13 @@ import React from "react"
 import Link from "next/link"
 import { ThickArrowUpIcon } from "@radix-ui/react-icons"
 
-import getPost from "@/lib/getPost"
+import { getPost } from "@/lib/helpers"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import Summary from "@/components/postId/Summary"
 
 type TranscriptDetailsProps = {
   params: { postId: string }
@@ -23,6 +30,7 @@ export default async function TranscriptDetails({
   const postData: Promise<PostType> = getPost(postId)
   const post = await postData
   const {
+    id,
     cohort,
     syllabus,
     sessionName,
@@ -33,10 +41,12 @@ export default async function TranscriptDetails({
     votesNum,
     user,
     transcription,
+    summary,
   } = post
   const article = transcription.sentences
     .map((sentence: { content: string }) => sentence.content)
     .join(" ")
+
   return (
     <>
       <div className="flex justify-center gap-4">
@@ -49,12 +59,12 @@ export default async function TranscriptDetails({
         <Button asChild>
           <Link href="">Delete</Link>
         </Button>
+        <Summary article={article} id={id} />
         <Button>
           <ThickArrowUpIcon className="mr-2 h-4 w-4" />
           vote
         </Button>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>
@@ -74,8 +84,26 @@ export default async function TranscriptDetails({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <b>Transcription:</b>
-          <p className="select-none">{article}</p>
+          <Accordion
+            type="single"
+            defaultValue={summary ? "summary" : "transcription"}
+            collapsible
+          >
+            {summary && (
+              <AccordionItem value="summary">
+                <AccordionTrigger>Summary:</AccordionTrigger>
+                <AccordionContent>
+                  <p className="select-none">{summary}</p>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+            <AccordionItem value="transcription">
+              <AccordionTrigger>Transcription:</AccordionTrigger>
+              <AccordionContent>
+                <p className="select-none">{article}</p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </CardContent>
         <CardFooter>
           <p>Uploader: {user.name}</p>

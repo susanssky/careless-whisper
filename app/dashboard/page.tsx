@@ -1,12 +1,15 @@
+import { revalidatePath } from "next/cache"
 import Image from "next/image"
 
-import getAllPosts from "@/lib/getAllPosts"
+import { getAllPosts } from "@/lib/helpers"
 import DashboardTableTr from "@/components/dashboard/TableTr"
 import UserSession from "@/components/dashboard/UserSession"
 
 export default async function Dashboard() {
   const postsData: Promise<PostType[]> = getAllPosts()
-  const posts = await postsData
+  const _posts = await postsData
+  const posts = _posts.sort((a, b) => a.id - b.id)
+  revalidatePath("/")
 
   return (
     <section className="container py-10">

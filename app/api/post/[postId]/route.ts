@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 
-import { postSelectContent } from "@/lib/helper"
+import { postSelectContent } from "@/lib/helpers"
 import { prisma } from "@/lib/prisma"
 
 type paramsProps = { params: { postId: string } }
