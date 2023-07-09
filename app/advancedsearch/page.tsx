@@ -28,35 +28,35 @@ const AdvancedSearchPage = () => {
 
   const searchUser = searchParams ? searchParams.get("user") : null
   const searchKeyword = searchParams ? searchParams.get("keywords") : null
-  const searchCategory = searchParams ? searchParams.get("category") : null
+  const searchCohort = searchParams ? searchParams.get("cohort") : null
   const searchSyllabusModule = searchParams
     ? searchParams.get("syllabusModule")
     : null
   const searchDuration = searchParams ? searchParams.get("duration") : null
 
   const encodedSearchUser = encodeURI(searchUser || "")
-  const encodedSearchKeyword = searchKeyword ? `"${encodeURIComponent(searchKeyword)}"` : "";
+  const encodedSearchKeyword = encodeURI(searchKeyword || "")
 
-  const encodedSearchCategory = encodeURI(searchCategory || "")
+  const encodedSearchCohort = encodeURI(searchCohort || "")
   const encodedSearchSyllabusModule = encodeURI(searchSyllabusModule || "")
   const encodedSearchDuration = encodeURI(searchDuration || "")
 
-  const { data, isLoading } = useSWR(
-    `/api/asearch?user=${encodedSearchUser}&keywords=${encodedSearchKeyword}&category=${encodedSearchCategory}&syllabusModule=${encodedSearchSyllabusModule}&duration=${encodedSearchDuration}`,
-    fetchSearchResults,
-    { revalidateOnFocus: false }
-  )
+const { data, isLoading } = useSWR(
+  `/api/asearch?user=${encodedSearchUser}&keywords=${encodeURIComponent(encodedSearchKeyword)}&cohort=${encodedSearchCohort}&syllabusModule=${encodedSearchSyllabusModule}&duration=${encodedSearchDuration}`,
+  fetchSearchResults,
+  { revalidateOnFocus: false }
+)
+
+
 
   if (isLoading) {
     return <Spinner />
   }
 
-  
-
   const submittedParams = {
     User: searchUser,
     Keywords: searchKeyword,
-    Category: searchCategory,
+    Category: searchCohort,
     "Syllabus Module": searchSyllabusModule,
     Duration: searchDuration,
   }
