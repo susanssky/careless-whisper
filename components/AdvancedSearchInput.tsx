@@ -8,8 +8,8 @@ const AdvancedSearchInput = () => {
   const [showInputs, setShowInputs] = useState(false);
   const [keywords, setKeywords] = useState("");
   const [user, setUser] = useState("");
-  const [mentor, setMentor] = useState("");
-  const [category, setCategory] = useState("");
+  const [leader, setLeader] = useState("");
+  const [cohort, setCohort] = useState("");
   const [syllabusModule, setSyllabusModule] = useState("");
   const [duration, setDuration] = useState("");
 
@@ -21,8 +21,8 @@ const AdvancedSearchInput = () => {
     const searchParams = {
       keywords,
       user,
-      mentor,
-      category,
+      leader,
+      cohort,
       syllabusModule,
       duration,
     };
@@ -73,18 +73,18 @@ const AdvancedSearchInput = () => {
           />
 
           <input
-            value={mentor}
-            onChange={(event) => setMentor(event.target.value)}
+            value={leader}
+            onChange={(event) => setLeader(event.target.value)}
             className="input-field"
-            placeholder="Mentor"
+            placeholder="Leader"
             onKeyPress={handleKeyPress}
           />
 
           <input
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
+            value={cohort}
+            onChange={(event) => setCohort(event.target.value)}
             className="input-field"
-            placeholder="Category"
+            placeholder="Cohort"
             onKeyPress={handleKeyPress}
           />
 
@@ -92,7 +92,7 @@ const AdvancedSearchInput = () => {
             value={syllabusModule}
             onChange={(event) => setSyllabusModule(event.target.value)}
             className="input-field"
-            placeholder="Syllabus Module"
+            placeholder="Syllabus"
             onKeyPress={handleKeyPress}
           />
 
