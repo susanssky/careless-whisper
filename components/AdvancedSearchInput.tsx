@@ -46,7 +46,7 @@ const AdvancedSearchInput = () => {
     <>  {!showInputs && (
         <button
           onClick={toggleInputs}
-          className="px-5 py-1 w-1/7 sm:px-5 sm:py-3 flex-1 text-zinc-200 bg-zinc-800 focus:bg-black rounded-full focus:outline-none focus:ring-[1px] focus:ring-green-700 placeholder:text-zinc-400"
+          className="px-5 py-1 w-1/7 sm:px-5 sm:py-3 flex-1 text-zinc-200 bg-zinc-800 focus:bg-black rounded-full focus:outline-none focus:ring-[1px] focus:ring-green-700 placeholder:text-zinc-400 ml-5"
         >
           Advanced Search
         </button>

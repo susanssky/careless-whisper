@@ -1,9 +1,16 @@
-import Image from "next/image"
+import Image from "next/image";
 
-import getAllPosts from "@/lib/getAllPosts"
+
+
+import getAllPosts from "@/lib/getAllPosts";
+import AdvancedSearchInput from "@/components/AdvancedSearchInput";
 import DashboardTableTr from "@/components/dashboard/TableTr"
 import UserSession from "@/components/dashboard/UserSession"
-import AdvancedSearchInput from "@/components/AdvancedSearchInput"
+import SearchInput from "@/components/SearchInput";
+
+
+
+
 
 export default async function Dashboard() {
   const postsData: Promise<PostType[]> = getAllPosts()
@@ -12,6 +19,7 @@ export default async function Dashboard() {
   return (
     <section className="container py-10">
       <UserSession />
+      <SearchInput/>
       <AdvancedSearchInput/>
       <div className="max-w-[980px] mx-auto flex items-center justify-between">
         <h1 className="text-3xl font-extrabold">Transcription</h1>
