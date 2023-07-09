@@ -46,6 +46,9 @@ type PostType = {
   }
   transcription: {
     sentences: {
+      lineNumber: string
+      startTime: string
+      endTime: string
       content: string
     }[]
   }

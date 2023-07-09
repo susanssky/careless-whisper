@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache"
 import { NextRequest, NextResponse } from "next/server"
 
 import { postSelectContent } from "@/lib/helpers"
@@ -14,5 +15,6 @@ export async function GET(request: NextRequest, { params }: paramsProps) {
     select: postSelectContent,
   })
   // console.log(getPost)
+  revalidatePath("/")
   return NextResponse.json(getPost)
 }

@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react"
 import { Configuration, OpenAIApi } from "openai"
 
 import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -119,8 +120,8 @@ export default function CreatePost() {
       ...prevData,
       [e.target.name]: e.target.value,
     }))
-    console.log(data)
-    console.log(summaryState)
+    // console.log(data)
+    // console.log(summaryState)
   }
   const validateForm = (data: createPostType) => {
     const {
@@ -201,7 +202,7 @@ export default function CreatePost() {
       }
 
       const result = await res.json()
-
+      toastSuccess()
       setData({
         cohortName: { open: false, value: "" },
         syllabusName: { open: false, value: "" },
@@ -217,7 +218,8 @@ export default function CreatePost() {
         fileInputRef.current.value = ""
       }
 
-      console.log(result)
+      // console.log(result)
+
       return result
     } catch (err) {
       console.error(err)
@@ -272,7 +274,7 @@ export default function CreatePost() {
   return (
     <div className="flex max-md:flex-col max-md:items-center">
       <form onSubmit={handleSubmit}>
-        <Card className="w-[350px] max-md:w-[400px]">
+        <Card className="h-[calc(100vh-64px)] w-[350px] max-md:w-[400px]">
           <CardHeader>
             <CardTitle>Create post</CardTitle>
             <CardDescription>
@@ -309,7 +311,7 @@ export default function CreatePost() {
                     <Command>
                       <CommandInput placeholder="Search cohort..." />
                       <CommandEmpty>No chort found.</CommandEmpty>
-                      <CommandGroup heading="London">
+                      <CommandGroup>
                         {cohortsName.map((cohort) => (
                           <CommandItem
                             key={cohort.value}
@@ -372,7 +374,7 @@ export default function CreatePost() {
                     <Command>
                       <CommandInput placeholder="Search syllabus..." />
                       <CommandEmpty>No syllabus found.</CommandEmpty>
-                      <CommandGroup heading="London">
+                      <CommandGroup>
                         {syllabusesName.map((syllabus) => (
                           <CommandItem
                             key={syllabus.value}
@@ -498,30 +500,34 @@ export default function CreatePost() {
               </Tabs>
               {summaryState.apiKey && data.transcription.length > 0 && (
                 <div className="grid w-full gap-1.5">
-                  <Label htmlFor="summary">OpenAI Summary</Label>
+                  <Label htmlFor="summary">
+                    OpenAI Summary{" "}
+                    {!summaryState.isLoading && (
+                      <Badge
+                        className="rounded-lg px-1.5 cursor-pointer"
+                        onClick={generateSummary}
+                      >
+                        Generate
+                      </Badge>
+                    )}
+                    {summaryState.isLoading && (
+                      <Badge className="rounded-lg place-items-center">
+                        <UpdateIcon className="animate-spin" />
+                      </Badge>
+                    )}
+                  </Label>
                   <Textarea
                     className="resize-none"
                     placeholder="A summary will be generated here."
                     id="summary"
                     name="summary"
-                    rows={10}
+                    rows={7}
                     value={data.summary}
                     onChange={handleChange}
                   />
                   <p className="text-sm text-rose-600">
                     {summaryState.errorMsg}
                   </p>
-                  {!summaryState.isLoading && (
-                    <Button onClick={(e) => generateSummary(e)}>
-                      Generate the summary
-                    </Button>
-                  )}
-                  {summaryState.isLoading && (
-                    <Button disabled className="w-full">
-                      <UpdateIcon className="mr-2 h-4 w-4 animate-spin" />
-                      Please wait
-                    </Button>
-                  )}
                 </div>
               )}
             </div>
@@ -538,9 +544,7 @@ export default function CreatePost() {
                 type="submit"
                 className="w-full"
                 onClick={() =>
-                  validateForm(data) && !summaryState.errorMsg
-                    ? toastSuccess()
-                    : toastFail()
+                  (!validateForm(data) || summaryState.errorMsg) && toastFail()
                 }
               >
                 Submit
@@ -550,7 +554,7 @@ export default function CreatePost() {
         </Card>
       </form>
       {data.transcription.length > 0 && (
-        <ScrollArea className="h-[600px]  rounded-md border p-4">
+        <ScrollArea className="h-[calc(100vh-64px)] rounded-md  p-4">
           <Table>
             <TableCaption>You have reached the last line.</TableCaption>
             <TableHeader>

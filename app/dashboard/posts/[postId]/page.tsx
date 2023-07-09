@@ -19,7 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import Summary from "@/components/postId/Summary"
+
 
 type TranscriptDetailsProps = {
   params: { postId: string }
@@ -27,8 +27,7 @@ type TranscriptDetailsProps = {
 export default async function TranscriptDetails({
   params: { postId },
 }: TranscriptDetailsProps) {
-  const postData: Promise<PostType> = getPost(postId)
-  const post = await postData
+  const post = await getPost(postId)
   const {
     id,
     cohort,
@@ -59,7 +58,6 @@ export default async function TranscriptDetails({
         <Button asChild>
           <Link href="">Delete</Link>
         </Button>
-        <Summary article={article} id={id} />
         <Button>
           <ThickArrowUpIcon className="mr-2 h-4 w-4" />
           vote
@@ -68,19 +66,18 @@ export default async function TranscriptDetails({
       <Card>
         <CardHeader>
           <CardTitle>
-            <p>
               {cohort.name} {syllabus.name}
-            </p>
-            <p>
+            <br />
+            <p className="text-base">
               {sessionName} by {leaderName}
             </p>
           </CardTitle>
           <CardDescription>
-            {originalVideoLink && <p>Video: {originalVideoLink}</p>}
-            <p className="flex justify-start gap-2">
+            {originalVideoLink && `Video: ${originalVideoLink}`}
+            <div className="flex justify-start gap-2">
               <Badge>duration: {duration}min(s)</Badge>
               <Badge>views: {viewsNum}</Badge> <Badge>votes: {votesNum}</Badge>
-            </p>
+            </div>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -105,9 +102,7 @@ export default async function TranscriptDetails({
             </AccordionItem>
           </Accordion>
         </CardContent>
-        <CardFooter>
-          <p>Uploader: {user.name}</p>
-        </CardFooter>
+        <CardFooter>Uploader: {user.name}</CardFooter>
       </Card>
     </>
   )
