@@ -4,7 +4,7 @@ import Link from "next/link"
 import getAllPosts from "@/lib/getAllPosts"
 import UserSession from "@/components/dashboard/UserSession"
 
-import SearchInput from "@/components/SearchInput"
+import SearchInput from "@/components/search/SearchInput"
 
 export default async function Dashboard() {
   const postsData = getAllPosts()
