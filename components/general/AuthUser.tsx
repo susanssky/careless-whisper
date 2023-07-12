@@ -1,6 +1,5 @@
 "use client"
 
-import { cache } from "react"
 import { GitHubLogoIcon } from "@radix-ui/react-icons"
 import { signOut, useSession } from "next-auth/react"
 

@@ -1,8 +1,8 @@
 import Link from "next/link"
 
 import { siteConfig } from "@/config/site"
-import { MainNav } from "@/components/MainNav"
-import { ThemeToggle } from "@/components/ThemeToggle"
+import { MainNav } from "@/components/general/MainNav"
+import { ThemeToggle } from "@/components/general/ThemeToggle"
 
 import AuthUser from "./AuthUser"
 
