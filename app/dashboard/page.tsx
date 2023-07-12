@@ -1,7 +1,5 @@
+
 import Image from "next/image";
-
-
-
 import getAllPosts from "@/lib/getAllPosts";
 import AdvancedSearchInput from "@/components/AdvancedSearchInput";
 import DashboardTableTr from "@/components/dashboard/TableTr"
@@ -12,12 +10,15 @@ import SearchInput from "@/components/SearchInput";
 
 
 
+import SearchInput from "@/components/search/SearchInput"
+
 export default async function Dashboard() {
   const postsData: Promise<PostType[]> = getAllPosts()
   const posts = await postsData
 
   return (
     <section className="container py-10">
+      <SearchInput/>
       <UserSession />
       <SearchInput/>
       <AdvancedSearchInput/>

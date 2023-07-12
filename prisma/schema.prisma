@@ -101,3 +101,9 @@ model Syllabus {
     link String? @unique
     post Post[]
 }
+
+model SearchQuery {
+  id        Int      @id @default(autoincrement())
+  query     String
+  createdAt DateTime @default(now())
+}
