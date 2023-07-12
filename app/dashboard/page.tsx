@@ -4,9 +4,6 @@ import getAllPosts from "@/lib/getAllPosts";
 import AdvancedSearchInput from "@/components/AdvancedSearchInput";
 import DashboardTableTr from "@/components/dashboard/TableTr"
 import UserSession from "@/components/dashboard/UserSession"
-import SearchInput from "@/components/SearchInput";
-
-
 
 
 
