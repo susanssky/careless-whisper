@@ -5,7 +5,7 @@ import useSWR from "swr";
 
 
 
-import Sentences from "@/components/Sentences";
+import Sentences from "@/components/search/Sentences";
 
 
 

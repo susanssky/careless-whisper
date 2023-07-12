@@ -4,10 +4,7 @@ import Image from "next/image"
 import { getAllPosts } from "@/lib/helpers"
 import DashboardTableTr from "@/components/dashboard/TableTr"
 import UserSession from "@/components/dashboard/UserSession"
-import SearchInput from "@/components/SearchInput";
-
-
-
+import AdvancedSearchInput from "@/components/AdvancedSearchInput"
 
 
 import SearchInput from "@/components/search/SearchInput"
