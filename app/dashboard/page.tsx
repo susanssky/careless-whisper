@@ -4,6 +4,13 @@ import Image from "next/image"
 import { getAllPosts } from "@/lib/helpers"
 import DashboardTableTr from "@/components/dashboard/TableTr"
 import UserSession from "@/components/dashboard/UserSession"
+import SearchInput from "@/components/SearchInput";
+
+
+
+
+
+import SearchInput from "@/components/search/SearchInput"
 
 export const revalidate = 1
 export default async function Dashboard() {
@@ -12,7 +19,10 @@ export default async function Dashboard() {
 
   return (
     <section className="container py-10">
+      <SearchInput/>
       <UserSession />
+      <SearchInput/>
+      <AdvancedSearchInput/>
       <div className="max-w-[980px] mx-auto flex items-center justify-between">
         <h1 className="text-3xl font-extrabold">Transcription</h1>
       </div>

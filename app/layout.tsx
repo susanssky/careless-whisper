@@ -1,14 +1,25 @@
-import "@/styles/globals.css"
 
-import { Metadata } from "next"
 
-import { siteConfig } from "@/config/site"
-import { fontSans } from "@/lib/fonts"
-import { cn } from "@/lib/utils"
-import AuthProvider from "@/components/AuthProvider"
-import { SiteHeader } from "@/components/SiteHeader"
+
+import "@/styles/globals.css";
+
+
+
+import { Metadata } from "next";
+
+
+
+import { siteConfig } from "@/config/site";
+import { fontSans } from "@/lib/fonts";
+import { cn } from "@/lib/utils";
+import AuthProvider from "@/components/AuthProvider";
+import { SiteHeader } from "@/components/SiteHeader";
 import { TailwindIndicator } from "@/components/TailwindIndicator"
 import { ThemeProvider } from "@/components/ThemeProvider"
+
+
+
+
 
 export const metadata: Metadata = {
   title: {
@@ -46,6 +57,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
               <div className="relative flex min-h-screen flex-col">
                 <SiteHeader />
+                
                 <div className="flex-1">{children}</div>
               </div>
               <TailwindIndicator />
