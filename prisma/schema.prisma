@@ -61,7 +61,7 @@ model User {
     createdAt     DateTime  @default(now())
     updatedAt     DateTime  @updatedAt
     posts         Post[]
-    postId        Int?
+    Session       Session[]
 }
 
 enum Role {
@@ -100,4 +100,20 @@ model Syllabus {
     name String  @unique
     link String? @unique
     post Post[]
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
 }
