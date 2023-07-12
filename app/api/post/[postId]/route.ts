@@ -1,6 +1,7 @@
+import { revalidatePath } from "next/cache"
 import { NextRequest, NextResponse } from "next/server"
 
-import { postSelectContent } from "@/lib/helper"
+import { postSelectContent } from "@/lib/helpers"
 import { prisma } from "@/lib/prisma"
 
 type paramsProps = { params: { postId: string } }
@@ -14,5 +15,6 @@ export async function GET(request: NextRequest, { params }: paramsProps) {
     select: postSelectContent,
   })
   // console.log(getPost)
+  revalidatePath("/")
   return NextResponse.json(getPost)
 }

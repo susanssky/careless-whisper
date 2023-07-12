@@ -1,7 +1,7 @@
+import { revalidatePath } from "next/cache"
+import Image from "next/image"
 
-import Image from "next/image";
-import getAllPosts from "@/lib/getAllPosts";
-import AdvancedSearchInput from "@/components/AdvancedSearchInput";
+import { getAllPosts } from "@/lib/helpers"
 import DashboardTableTr from "@/components/dashboard/TableTr"
 import UserSession from "@/components/dashboard/UserSession"
 
@@ -9,9 +9,10 @@ import UserSession from "@/components/dashboard/UserSession"
 
 import SearchInput from "@/components/search/SearchInput"
 
+export const revalidate = 1
 export default async function Dashboard() {
-  const postsData: Promise<PostType[]> = getAllPosts()
-  const posts = await postsData
+  const posts = await getAllPosts()
+  // console.log(posts)
 
   return (
     <section className="container py-10">

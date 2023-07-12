@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation"
 import { ThickArrowUpIcon } from "@radix-ui/react-icons"
 
 import { deletePost } from "@/lib/deletePost"
-import getPost from "@/lib/getPost"
+import { getPost } from "@/lib/helpers"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,12 +24,14 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+
 type TranscriptDetailsProps = {
   params: { postId: string }
 }
 export default function TranscriptDetails({
   params: { postId },
 }: TranscriptDetailsProps) {
+
   const router = useRouter()
   const [post, setPost] = useState<PostType | null>(null)
 
@@ -51,6 +59,7 @@ export default function TranscriptDetails({
   }
 
   const {
+    id,
     cohort,
     syllabus,
     sessionName,
@@ -61,6 +70,7 @@ export default function TranscriptDetails({
     votesNum,
     user,
     transcription,
+    summary,
   } = post
 
   const article = transcription.sentences
@@ -84,32 +94,46 @@ export default function TranscriptDetails({
           vote
         </Button>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>
-            <p>
               {cohort.name} {syllabus.name}
-            </p>
-            <p>
+            <br />
+            <p className="text-base">
               {sessionName} by {leaderName}
             </p>
           </CardTitle>
           <CardDescription>
-            {originalVideoLink && <p>Video: {originalVideoLink}</p>}
-            <p className="flex justify-start gap-2">
+            {originalVideoLink && `Video: ${originalVideoLink}`}
+            <div className="flex justify-start gap-2">
               <Badge>duration: {duration}min(s)</Badge>
               <Badge>views: {viewsNum}</Badge> <Badge>votes: {votesNum}</Badge>
-            </p>
+            </div>
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <b>Transcription:</b>
-          <p className="select-none">{article}</p>
+          <Accordion
+            type="single"
+            defaultValue={summary ? "summary" : "transcription"}
+            collapsible
+          >
+            {summary && (
+              <AccordionItem value="summary">
+                <AccordionTrigger>Summary:</AccordionTrigger>
+                <AccordionContent>
+                  <p className="select-none">{summary}</p>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+            <AccordionItem value="transcription">
+              <AccordionTrigger>Transcription:</AccordionTrigger>
+              <AccordionContent>
+                <p className="select-none">{article}</p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </CardContent>
-        <CardFooter>
-          <p>Uploader: {user.name}</p>
-        </CardFooter>
+        <CardFooter>Uploader: {user.name}</CardFooter>
       </Card>
     </>
   )

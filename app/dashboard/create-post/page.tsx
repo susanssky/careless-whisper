@@ -4,14 +4,10 @@ import React, { ChangeEvent, FormEvent, useRef, useState } from "react"
 //----left card------
 import { CaretSortIcon, CheckIcon, UpdateIcon } from "@radix-ui/react-icons"
 import { useSession } from "next-auth/react"
+import { Configuration, OpenAIApi } from "openai"
 
 import { cn } from "@/lib/utils"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -75,12 +71,19 @@ export default function CreatePost() {
   const { toast } = useToast()
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [summaryState, setSummaryState] = useState({
+    apiKey: "",
+    isLoading: false,
+    errorMsg: "",
+  })
+
   const [data, setData] = useState<createPostType>({
     cohortName: { open: false, value: "" },
     syllabusName: { open: false, value: "" },
     sessionName: "",
     leaderName: "",
     originalVideoLink: "",
+    summary: "",
     transcription: [],
   })
   const parseSrtFile = (contents: string) => {
@@ -117,6 +120,8 @@ export default function CreatePost() {
       ...prevData,
       [e.target.name]: e.target.value,
     }))
+    // console.log(data)
+    // console.log(summaryState)
   }
   const validateForm = (data: createPostType) => {
     const {
@@ -124,7 +129,6 @@ export default function CreatePost() {
       syllabusName: { value: syllabusName },
       sessionName,
       leaderName,
-      originalVideoLink,
       transcription,
     } = data
 
@@ -151,8 +155,9 @@ export default function CreatePost() {
     toast({
       variant: "destructive",
       title: "Uh oh! Something went wrong.",
-      description:
-        "You have to fill out cohort, syllabus, session, leader and upload valid srt file.",
+      description: summaryState.errorMsg
+        ? "Please clear API Key"
+        : "You have to fill out cohort, syllabus, session, leader and upload valid srt file.",
       action: <ToastAction altText="Try again">Try again</ToastAction>,
     })
   }
@@ -160,68 +165,116 @@ export default function CreatePost() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    const {
-      cohortName: { value: cohortName },
-      syllabusName: { value: syllabusName },
-      sessionName,
-      leaderName,
-      originalVideoLink,
-      transcription,
-    } = data
-    if (!validateForm(data)) {
-      setIsLoading(false)
-      return
-    }
+    try {
+      if (!validateForm(data) || summaryState.errorMsg) {
+        return
+      }
 
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/post`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        cohortName,
-        syllabusName,
+      const {
+        cohortName: { value: cohortName },
+        syllabusName: { value: syllabusName },
         sessionName,
         leaderName,
         originalVideoLink,
         transcription,
-        user: session?.user,
-      }),
-    })
-    if (!res.ok) {
+        summary,
+      } = data
+      // console.log(data)
+
+      const res = await fetch(`${process.env.NEXTAUTH_URL}/api/post`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cohortName,
+          syllabusName,
+          sessionName,
+          leaderName,
+          originalVideoLink,
+          transcription,
+          user: session?.user,
+          summary,
+        }),
+      })
+      if (!res.ok) {
+        return
+      }
+
+      const result = await res.json()
+      toastSuccess()
+      setData({
+        cohortName: { open: false, value: "" },
+        syllabusName: { open: false, value: "" },
+        sessionName: "",
+        leaderName: "",
+        originalVideoLink: "",
+        transcription: [],
+        summary: "",
+      })
+      setSummaryState({ apiKey: "", errorMsg: "", isLoading: false })
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+
+      // console.log(result)
+
+      return result
+    } catch (err) {
+      console.error(err)
+    } finally {
       setIsLoading(false)
-      return
     }
-    // console.log({
-    //   cohortName,
-    //   syllabusName,
-    //   sessionName,
-    //   leaderName,
-    //   originalVideoLink,
-    //   transcription,
-    //   user: session?.user,
-    // })
-    // console.log(res.ok)
-    const result = await res.json()
-    setData({
-      cohortName: { open: false, value: "" },
-      syllabusName: { open: false, value: "" },
-      sessionName: "",
-      leaderName: "",
-      originalVideoLink: "",
-      transcription: [],
+  }
+
+  const generateSummary = async (e: FormEvent) => {
+    e.preventDefault()
+    if (data.transcription.length <= 0) return
+    setSummaryState((prev) => ({ ...prev, isLoading: true }))
+    setIsLoading(true)
+    // const res = await getSummary(article)
+
+    const configuration = new Configuration({
+      apiKey: summaryState.apiKey,
     })
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+    const openai = new OpenAIApi(configuration)
+    const article = data.transcription
+      .map((sentence: { content: string }) => sentence.content)
+      .join(" ")
+    try {
+      setSummaryState((prev) => ({ ...prev, errorMsg: "" }))
+      const res = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: `Summarise this ${article}.`,
+        // prompt: `Summarise this in five lines ${article}. and break them into seperate lines`,
+        temperature: 0.6,
+        max_tokens: 60,
+        top_p: 1.0,
+        // frequency_penalty: 0.0,
+        presence_penalty: 1,
+      })
+      // ;
+
+      if (res.status === 200) {
+        const summary = res?.data?.choices[0]?.text as string
+        setData((prev) => ({ ...prev, summary: summary.replace(/\n/g, "") }))
+      }
+    } catch (error: any) {
+      // console.error({ error })
+      setSummaryState((prev) => ({
+        ...prev,
+        errorMsg: error.response.data.error.message,
+      }))
+    } finally {
+      setSummaryState((prev) => ({ ...prev, isLoading: false }))
+      setIsLoading(false)
     }
-    setIsLoading(false)
-    // console.log(result)
-    return result
   }
   return (
     <div className="flex max-md:flex-col max-md:items-center">
       <form onSubmit={handleSubmit}>
-        <Card className="w-[350px] max-md:w-[400px]">
+        <Card className="h-[calc(100vh-64px)] w-[350px] max-md:w-[400px]">
           <CardHeader>
             <CardTitle>Create post</CardTitle>
             <CardDescription>
@@ -231,7 +284,9 @@ export default function CreatePost() {
           <CardContent>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="cohort-name">Cohort Name</Label>
+                <Label htmlFor="cohort-name">
+                  Cohort Name<span className="text-rose-600">*</span>
+                </Label>
                 <Popover
                   open={data.cohortName.open}
                   onOpenChange={(open) =>
@@ -256,7 +311,7 @@ export default function CreatePost() {
                     <Command>
                       <CommandInput placeholder="Search cohort..." />
                       <CommandEmpty>No chort found.</CommandEmpty>
-                      <CommandGroup heading="London">
+                      <CommandGroup>
                         {cohortsName.map((cohort) => (
                           <CommandItem
                             key={cohort.value}
@@ -292,7 +347,9 @@ export default function CreatePost() {
                 </Popover>
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="syllabus-name">Syllabus Name</Label>
+                <Label htmlFor="syllabus-name">
+                  Syllabus Name<span className="text-rose-600">*</span>
+                </Label>
                 <Popover
                   open={data.syllabusName.open}
                   onOpenChange={(open) =>
@@ -317,7 +374,7 @@ export default function CreatePost() {
                     <Command>
                       <CommandInput placeholder="Search syllabus..." />
                       <CommandEmpty>No syllabus found.</CommandEmpty>
-                      <CommandGroup heading="London">
+                      <CommandGroup>
                         {syllabusesName.map((syllabus) => (
                           <CommandItem
                             key={syllabus.value}
@@ -353,7 +410,9 @@ export default function CreatePost() {
                 </Popover>
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="sessionName">Session Name</Label>
+                <Label htmlFor="sessionName">
+                  Session Name<span className="text-rose-600">*</span>
+                </Label>
                 <Input
                   id="sessionName"
                   name="sessionName"
@@ -362,7 +421,9 @@ export default function CreatePost() {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="leaderName">Leader Name</Label>
+                <Label htmlFor="leaderName">
+                  Leader Name<span className="text-rose-600">*</span>
+                </Label>
                 <Input
                   id="leaderName"
                   name="leaderName"
@@ -379,105 +440,151 @@ export default function CreatePost() {
                   onChange={handleChange}
                 />
               </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="apiKey">OpenAI API Key</Label>
+                <Input
+                  id="apiKey"
+                  name="apiKey"
+                  autoComplete="off"
+                  value={summaryState.apiKey}
+                  onChange={(e) => {
+                    setSummaryState((prev) => ({
+                      ...prev,
+                      errorMsg: "",
+                      apiKey: e.target.value,
+                    }))
+                    if (summaryState.apiKey.length <= 0) {
+                      setData((prev) => ({
+                        ...prev,
+                        summary: "",
+                      }))
+                    }
+                  }}
+                />
+              </div>
+              <Tabs defaultValue="whisper" className="w-full">
+                <TabsList className="flex justify-center">
+                  <TabsTrigger value="whisper">Whisper</TabsTrigger>
+                  {/* <TabsTrigger value="whisper-jax">Whisper JAX</TabsTrigger> */}
+                </TabsList>
+
+                <TabsContent value="whisper">
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="whisper">
+                      Please upload .srt file
+                      <span className="text-rose-600">*</span>
+                    </Label>
+                    <Input
+                      ref={fileInputRef}
+                      id="whisper"
+                      name="whisper"
+                      type="file"
+                      accept=".srt"
+                      onChange={handleFileUpload}
+                    />
+                  </div>
+                </TabsContent>
+                {/* <TabsContent value="whisper-jax">
+                  <div className="grid w-full gap-1.5">
+                    <Label htmlFor="whisper-jax">
+                      Please paste below with timestamp
+                    </Label>
+                    <Textarea
+                      id="whisper-jax"
+                      name="whisper-jax"
+                      placeholder="Paste here from Huggingface."
+                      className="resize-none"
+                    />
+                  </div>
+                </TabsContent> */}
+              </Tabs>
+              {summaryState.apiKey && data.transcription.length > 0 && (
+                <div className="grid w-full gap-1.5">
+                  <Label htmlFor="summary">
+                    OpenAI Summary{" "}
+                    {!summaryState.isLoading && (
+                      <Badge
+                        className="rounded-lg px-1.5 cursor-pointer"
+                        onClick={generateSummary}
+                      >
+                        Generate
+                      </Badge>
+                    )}
+                    {summaryState.isLoading && (
+                      <Badge className="rounded-lg place-items-center">
+                        <UpdateIcon className="animate-spin" />
+                      </Badge>
+                    )}
+                  </Label>
+                  <Textarea
+                    className="resize-none"
+                    placeholder="A summary will be generated here."
+                    id="summary"
+                    name="summary"
+                    rows={7}
+                    value={data.summary}
+                    onChange={handleChange}
+                  />
+                  <p className="text-sm text-rose-600">
+                    {summaryState.errorMsg}
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Tabs defaultValue="whisper" className="w-full">
-              <TabsList className="flex justify-center">
-                <TabsTrigger value="whisper">Whisper</TabsTrigger>
-                <TabsTrigger value="whisper-jax">Whisper JAX</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="whisper">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="whisper">Please upload .srt file</Label>
-                  <Input
-                    ref={fileInputRef}
-                    id="whisper"
-                    name="whisper"
-                    type="file"
-                    accept=".srt"
-                    onChange={handleFileUpload}
-                  />
-                </div>
-              </TabsContent>
-              <TabsContent value="whisper-jax">
-                <div className="grid w-full gap-1.5">
-                  <Label htmlFor="whisper-jax">
-                    Please paste below with timestamp
-                  </Label>
-                  <Textarea
-                    id="whisper-jax"
-                    name="whisper-jax"
-                    placeholder="Paste here from Huggingface."
-                    className="resize-none"
-                  />
-                </div>
-              </TabsContent>
-              {isLoading && (
-                <Button disabled className="w-full">
-                  <UpdateIcon className="mr-2 h-4 w-4 animate-spin" />
-                  Please wait
-                </Button>
-              )}
-              {!isLoading && (
-                <Button
-                  type="submit"
-                  className="w-full"
-                  onClick={() =>
-                    validateForm(data) ? toastSuccess() : toastFail()
-                  }
-                >
-                  Submit
-                </Button>
-              )}
-            </Tabs>
+            {isLoading && (
+              <Button disabled className="w-full">
+                <UpdateIcon className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>
+            )}
+            {!isLoading && (
+              <Button
+                type="submit"
+                className="w-full"
+                onClick={() =>
+                  (!validateForm(data) || summaryState.errorMsg) && toastFail()
+                }
+              >
+                Submit
+              </Button>
+            )}
           </CardFooter>
         </Card>
       </form>
       {data.transcription.length > 0 && (
-        <Accordion
-          type="single"
-          defaultValue="transcription-item-1"
-          collapsible
-        >
-          <AccordionItem value="transcription-item-1">
-            <AccordionTrigger>Click here to toggle preview.</AccordionTrigger>
-            <AccordionContent>
-              <ScrollArea className="h-[600px]  rounded-md border p-4">
-                <Table>
-                  <TableCaption>You have reached the last line.</TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-center">id</TableHead>
-                      <TableHead className="text-center">Start Time</TableHead>
-                      <TableHead className="text-center">End Time</TableHead>
-                      <TableHead className="text-center">Sentence</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.transcription.map((sentence) => (
-                      <TableRow key={sentence.lineNumber}>
-                        <TableCell className="font-medium text-center">
-                          {sentence.lineNumber}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {sentence.startTime}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {sentence.endTime}
-                        </TableCell>
-                        <TableCell className="text-left">
-                          {sentence.content}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <ScrollArea className="h-[calc(100vh-64px)] rounded-md  p-4">
+          <Table>
+            <TableCaption>You have reached the last line.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-center">id</TableHead>
+                <TableHead className="text-center">Start Time</TableHead>
+                <TableHead className="text-center">End Time</TableHead>
+                <TableHead className="text-center">Sentence</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.transcription.map((sentence) => (
+                <TableRow key={sentence.lineNumber}>
+                  <TableCell className="font-medium text-center">
+                    {sentence.lineNumber}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {sentence.startTime}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {sentence.endTime}
+                  </TableCell>
+                  <TableCell className="text-left">
+                    {sentence.content}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </ScrollArea>
       )}
     </div>
   )
