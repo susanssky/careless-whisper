@@ -14,6 +14,7 @@ type commonFields = {
   leaderName: string
   originalVideoLink?: string
   transcription: createSentenceType[]
+  summary?: string
 }
 
 type createPostType = commonFields & {
@@ -45,9 +46,13 @@ type PostType = {
   }
   transcription: {
     sentences: {
+      lineNumber: string
+      startTime: string
+      endTime: string
       content: string
     }[]
   }
+  summary: string
 }
 type DashboardTableTrPropsType = {
   post: PostType
