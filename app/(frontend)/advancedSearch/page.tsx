@@ -2,14 +2,12 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
-
+import LoadingComponent from "@/components/dashboard/Loading"
 
 
 import Sentences from "@/components/search/Sentences";
 
 
-
-import Spinner from "./Spinner";
 
 
 const fetchSearchResults = async (url: string) => {
@@ -50,7 +48,7 @@ const { data, isLoading } = useSWR(
 
 
   if (isLoading) {
-    return <Spinner />
+    return <LoadingComponent />
   }
 
   const submittedParams = {
@@ -88,5 +86,3 @@ const { data, isLoading } = useSWR(
     </>
   )
 }
-
-export default AdvancedSearchPage

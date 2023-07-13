@@ -1,4 +1,3 @@
-import { randomBytes, randomUUID } from "crypto"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { AuthOptions } from "next-auth"
 import GithubProvider from "next-auth/providers/github"
@@ -20,10 +19,25 @@ export const authOptions: AuthOptions = {
   //   debug: process.env.NODE_ENV === "development",
   pages: {
     error: "/",
-    signIn: "/",
+    signIn: "/dashboard",
     signOut: "/",
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // console.log(user)
+      // console.log(account)
+      // console.log(profile)
+
+      return true
+    },
+    // async redirect({ url, baseUrl }) {
+    //   // Allows relative callback URLs
+    //   console.log(url, baseUrl)
+    //   if (url.startsWith("/")) return `${baseUrl}/dashboard`
+    //   // Allows callback URLs on the same origin
+    //   else if (new URL(url).origin === baseUrl) return url
+    //   return baseUrl
+    // },
     async jwt({ token, user }) {
       //   token.role = "member"
       //   console.log(token)
@@ -31,9 +45,10 @@ export const authOptions: AuthOptions = {
       return { ...token, ...user }
     },
     async session({ session, token, user }) {
-      //   console.log(session)
+      // console.log(session)
       //   console.log(token)
-      //   console.log(user)
+      // console.log(user)
+
       session.user = token as any
       return session
     },

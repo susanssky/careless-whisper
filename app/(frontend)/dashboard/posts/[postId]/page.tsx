@@ -2,7 +2,7 @@ import React from "react"
 import Link from "next/link"
 import { ThickArrowUpIcon } from "@radix-ui/react-icons"
 
-import { getPost } from "@/lib/helpers"
+import { getPost, UserServerSession } from "@/lib/helpers"
 import {
   Accordion,
   AccordionContent,
@@ -20,7 +20,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-
 type TranscriptDetailsProps = {
   params: { postId: string }
 }
@@ -28,6 +27,7 @@ export default async function TranscriptDetails({
   params: { postId },
 }: TranscriptDetailsProps) {
   const post = await getPost(postId)
+  const session = await UserServerSession()
   const {
     id,
     cohort,
@@ -52,12 +52,17 @@ export default async function TranscriptDetails({
         <Button asChild variant="destructive">
           <Link href="/dashboard">Back to the dashboard</Link>
         </Button>
-        <Button asChild>
-          <Link href="">Edit</Link>
-        </Button>
-        <Button asChild>
-          <Link href="">Delete</Link>
-        </Button>
+        {session?.user.role === "Mentor" && (
+          <>
+            <Button asChild>
+              <Link href="">Edit</Link>
+            </Button>
+            <Button asChild>
+              <Link href="">Delete</Link>
+            </Button>
+          </>
+        )}
+
         <Button>
           <ThickArrowUpIcon className="mr-2 h-4 w-4" />
           vote
@@ -66,7 +71,7 @@ export default async function TranscriptDetails({
       <Card>
         <CardHeader>
           <CardTitle>
-              {cohort.name} {syllabus.name}
+            {cohort.name} {syllabus.name}
             <br />
             <p className="text-base">
               {sessionName} by {leaderName}

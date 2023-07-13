@@ -1,3 +1,7 @@
+import { getServerSession } from "next-auth/next"
+
+import { authOptions } from "@/lib/authOptions"
+
 export async function getAllPosts() {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts`, {
     cache: "no-store",
@@ -16,6 +20,10 @@ export async function getPost(postId: string) {
   if (!res.ok) throw new Error("failed to fetch data")
   const post: PostType = await res.json()
   return post
+}
+
+export async function UserServerSession() {
+  return await getServerSession(authOptions)
 }
 
 //---api---
