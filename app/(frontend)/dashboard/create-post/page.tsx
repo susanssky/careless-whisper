@@ -274,7 +274,7 @@ export default function CreatePost() {
   return (
     <div className="flex max-md:flex-col max-md:items-center">
       <form onSubmit={handleSubmit}>
-        <Card className="h-[calc(100vh-64px)] w-[350px] max-md:w-[400px]">
+        <Card className="h-full w-[350px] max-md:w-[400px]">
           <CardHeader>
             <CardTitle>Create post</CardTitle>
             <CardDescription>

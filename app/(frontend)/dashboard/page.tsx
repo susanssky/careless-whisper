@@ -1,28 +1,23 @@
-import { revalidatePath } from "next/cache"
 import Image from "next/image"
 
-import { getAllPosts } from "@/lib/helpers"
+import { getAllPosts, UserServerSession } from "@/lib/helpers"
+import AdvancedSearchInput from "@/components/AdvancedSearchInput"
 import DashboardTableTr from "@/components/dashboard/TableTr"
-import UserSession from "@/components/dashboard/UserSession"
-
-
-
 import SearchInput from "@/components/search/SearchInput"
 
 export const revalidate = 1
+
 export default async function Dashboard() {
   const posts = await getAllPosts()
+  const session = await UserServerSession()
   // console.log(posts)
 
   return (
     <section className="container py-10">
-      <SearchInput/>
-      <UserSession />
-      <SearchInput/>
-      <AdvancedSearchInput/>
-      <div className="max-w-[980px] mx-auto flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold">Transcription</h1>
-      </div>
+      Hi {session?.user?.name}, You are {session?.user?.role}
+      <SearchInput />
+      <AdvancedSearchInput />
+      <div className="max-w-[980px] mx-auto flex items-center justify-between"></div>
       <div className="flex justify-center mt-8">
         <Image
           src="/images/img2.jpg"
@@ -36,7 +31,6 @@ export default async function Dashboard() {
         <h2 className="text-2xl font-bold text-center mt-8 mb-4 text-red-500">
           List of transcripts
         </h2>
-
         <table className="w-full border-collapse text-center">
           <thead>
             <tr>

@@ -3,9 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import useSWR from "swr"
 
+import LoadingComponent from "@/components/dashboard/Loading"
 import Sentences from "@/components/search/Sentences"
-
-import Spinner from "./Spinner"
 
 const fetchPosts = async (url: string) => {
   const response = await fetch(url)
@@ -35,13 +34,12 @@ const SearchPage = () => {
   }
 
   if (isLoading) {
-    return <Spinner />
+    return <LoadingComponent />
   }
 
   if (!data || data.length === 0) {
-    return <div>No results found for: {searchQuery}</div>;
+    return <div>No results found for: {searchQuery}</div>
   }
-
 
   return (
     <>
