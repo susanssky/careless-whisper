@@ -1,7 +1,11 @@
-import React from "react"
+"use client"
+
+import React, { useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ThickArrowUpIcon } from "@radix-ui/react-icons"
 
+import { deletePost } from "@/lib/deletePost"
 import { getPost } from "@/lib/helpers"
 import {
   Accordion,
@@ -24,10 +28,36 @@ import {
 type TranscriptDetailsProps = {
   params: { postId: string }
 }
-export default async function TranscriptDetails({
+export default function TranscriptDetails({
   params: { postId },
 }: TranscriptDetailsProps) {
-  const post = await getPost(postId)
+
+  const router = useRouter()
+  const [post, setPost] = useState<PostType | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const postData: Promise<PostType> = getPost(postId)
+      const fetchedPost = await postData
+      setPost(fetchedPost)
+    }
+
+    fetchData()
+  }, [postId])
+
+  const handleDelete = async (postId: string) => {
+    const success = await deletePost(postId)
+    if (success) {
+      router.push("/dashboard") 
+    } else {
+      console.error("Failed to delete post")
+    }
+  }
+
+  if (!post) {
+    return <div>Loading...</div> 
+  }
+
   const {
     id,
     cohort,
@@ -42,6 +72,7 @@ export default async function TranscriptDetails({
     transcription,
     summary,
   } = post
+
   const article = transcription.sentences
     .map((sentence: { content: string }) => sentence.content)
     .join(" ")
@@ -55,7 +86,7 @@ export default async function TranscriptDetails({
         <Button asChild>
           <Link href="">Edit</Link>
         </Button>
-        <Button asChild>
+        <Button asChild onClick={() => handleDelete(postId)}>
           <Link href="">Delete</Link>
         </Button>
         <Button>
