@@ -4,16 +4,13 @@ type createSentenceType = {
   endTime: string
   content: string
 }
-
-type createTranscriptionType = {
-  sentences: createSentenceType[]
-  postId: number
-}
+//submit the post from client
 type commonFields = {
   sessionName: string
   leaderName: string
   originalVideoLink?: string
   transcription: createSentenceType[]
+  summary?: string
 }
 
 type createPostType = commonFields & {
@@ -26,6 +23,7 @@ type createPostFromClientType = commonFields & {
   syllabusName: string
   user: { id: string }
 }
+//display the post
 type PostType = {
   id: number
   originalVideoLink?: string
@@ -44,10 +42,9 @@ type PostType = {
     name: string
   }
   transcription: {
-    sentences: {
-      content: string
-    }[]
+    sentences: createSentenceType[]
   }
+  summary: string
 }
 type DashboardTableTrPropsType = {
   post: PostType

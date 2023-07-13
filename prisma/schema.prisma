@@ -87,6 +87,7 @@ model Post {
     updatedAt         DateTime       @updatedAt
     cohortId          Int
     transcription     Transcription?
+    summary           String?
 }
 
 model Cohort {
@@ -116,4 +117,10 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model SearchQuery {
+    id        Int      @id @default(autoincrement())
+    query     String
+    createdAt DateTime @default(now())
 }
