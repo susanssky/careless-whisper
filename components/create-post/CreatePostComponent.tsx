@@ -221,7 +221,7 @@ export default function CreatePostForm({ syllabusesName, session }: PropsType) {
 
   const generateSummary = async (e: FormEvent) => {
     e.preventDefault()
-    console.log(data.transcription.length)
+    // console.log(data.transcription.length)
     if (data.transcription.length <= 0) return
 
     setSummaryState((prev) => ({ ...prev, isLoading: true }))
@@ -441,7 +441,11 @@ export default function CreatePostForm({ syllabusesName, session }: PropsType) {
                   <Badge
                     className="rounded-full px-1.5 cursor-pointer"
                     onClick={() =>
-                      setSummaryState((prev) => ({ ...prev, apiKey: "" }))
+                      setSummaryState((prev) => ({
+                        ...prev,
+                        errorMsg: "",
+                        apiKey: "",
+                      }))
                     }
                   >
                     Clear
