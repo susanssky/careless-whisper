@@ -95,7 +95,7 @@ export default function CreatePostForm({ syllabusesName, session }: PropsType) {
   }
 
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) return
+    if (!event.target.files || event.target.files?.length === 0) return
     const file = event.target.files[0]
     const reader = new FileReader()
     reader.onload = function (e) {
@@ -411,6 +411,7 @@ export default function CreatePostForm({ syllabusesName, session }: PropsType) {
                 <Input
                   id="sessionName"
                   name="sessionName"
+                  autoComplete="off"
                   value={data.sessionName}
                   onChange={handleChange}
                 />
@@ -422,6 +423,7 @@ export default function CreatePostForm({ syllabusesName, session }: PropsType) {
                 <Input
                   id="leaderName"
                   name="leaderName"
+                  autoComplete="off"
                   value={data.leaderName}
                   onChange={handleChange}
                 />
@@ -431,6 +433,7 @@ export default function CreatePostForm({ syllabusesName, session }: PropsType) {
                 <Input
                   id="originalVideoLink"
                   name="originalVideoLink"
+                  autoComplete="off"
                   value={data.originalVideoLink}
                   onChange={handleChange}
                 />
@@ -507,38 +510,35 @@ export default function CreatePostForm({ syllabusesName, session }: PropsType) {
                   </div>
                 </TabsContent> */}
               </Tabs>
-              {summaryState.apiKey && data.transcription.length > 0 && (
-                <div className="grid w-full gap-1.5">
-                  <Label htmlFor="summary">
-                    OpenAI Summary{" "}
-                    {!summaryState.isLoading && (
-                      <Badge
-                        className="rounded-full px-1.5 cursor-pointer"
-                        onClick={generateSummary}
-                      >
-                        Generate
-                      </Badge>
-                    )}
-                    {summaryState.isLoading && (
-                      <Badge className="rounded-lg place-items-center">
-                        <UpdateIcon className="animate-spin" />
-                      </Badge>
-                    )}
-                  </Label>
-                  <Textarea
-                    className="resize-none"
-                    placeholder="A summary will be generated here."
-                    id="summary"
-                    name="summary"
-                    rows={7}
-                    value={data.summary}
-                    onChange={handleChange}
-                  />
-                  <p className="text-sm text-rose-600">
-                    {summaryState.errorMsg}
-                  </p>
-                </div>
-              )}
+
+              <div className="grid w-full gap-1.5">
+                <Label htmlFor="summary">
+                  OpenAI Summary{" "}
+                  {!summaryState.isLoading && (
+                    <Badge
+                      className="rounded-full px-1.5 cursor-pointer"
+                      onClick={generateSummary}
+                    >
+                      Generate
+                    </Badge>
+                  )}
+                  {summaryState.isLoading && (
+                    <Badge className="rounded-lg place-items-center">
+                      <UpdateIcon className="animate-spin" />
+                    </Badge>
+                  )}
+                </Label>
+                <Textarea
+                  className="resize-none"
+                  placeholder="A summary will be generated here."
+                  id="summary"
+                  name="summary"
+                  rows={7}
+                  value={data.summary}
+                  onChange={handleChange}
+                />
+                <p className="text-sm text-rose-600">{summaryState.errorMsg}</p>
+              </div>
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
