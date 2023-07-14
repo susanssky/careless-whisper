@@ -49,3 +49,8 @@ type PostType = {
 type DashboardTableTrPropsType = {
   post: PostType
 }
+type SyllabusType = {
+  id: number
+  name: string
+  link: string
+}
