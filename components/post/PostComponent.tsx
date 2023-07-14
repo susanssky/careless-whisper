@@ -51,6 +51,7 @@ export default function PostComponent({ post, session }: PostComponentProps) {
 
     if (success) {
       router.push("/dashboard")
+      router.refresh()
     } else {
       console.error("Failed to delete post")
     }
