@@ -45,7 +45,7 @@ export const postSelectContent = {
   duration: true,
   viewsNum: true,
   votesNum: true,
-  syllabus: { select: { name: true } },
+  syllabus: { select: { name: true, link: true } },
   cohort: { select: { name: true } },
   user: { select: { name: true } },
   transcription: {
