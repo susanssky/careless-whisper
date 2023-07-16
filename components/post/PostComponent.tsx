@@ -42,6 +42,7 @@ export default function PostComponent({ post, session }: PostComponentProps) {
     transcription,
     summary,
   } = post
+  console.log(originalVideoLink)
 
   const article = transcription.sentences
     .map((sentence: { content: string }) => sentence.content)
@@ -94,12 +95,14 @@ export default function PostComponent({ post, session }: PostComponentProps) {
             </p>
           </CardTitle>
           <CardDescription>
-            {originalVideoLink &&
-              `Video: ${(
+            {originalVideoLink && (
+              <>
+                Video:
                 <Link href={originalVideoLink} target="_blank">
                   {originalVideoLink}
                 </Link>
-              )}`}
+              </>
+            )}
             <div className="flex justify-start gap-2">
               <Badge>duration: {duration}min(s)</Badge>
               <Badge>views: {viewsNum}</Badge> <Badge>votes: {votesNum}</Badge>
