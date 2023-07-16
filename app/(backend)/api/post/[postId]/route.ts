@@ -18,3 +18,14 @@ export async function GET(request: NextRequest, { params }: paramsProps) {
   revalidatePath("/")
   return NextResponse.json(getPost)
 }
+
+export async function DELETE(request: NextRequest, { params }: paramsProps) {
+  const { postId } = params
+  const deletedPost = await prisma.post.delete({
+    where: {
+      id: Number(postId),
+    },
+  })
+
+  return NextResponse.json(deletedPost)
+}
