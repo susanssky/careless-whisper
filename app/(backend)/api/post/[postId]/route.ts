@@ -25,8 +25,26 @@ export async function GET(request: NextRequest, { params }: paramsProps) {
   return NextResponse.json(getPost)
 }
 
+
+
 export async function DELETE(request: NextRequest, { params }: paramsProps) {
   const { postId } = params
+
+  const votesForPost = await prisma.vote.findMany({
+    where: {
+      postId: parseInt(postId),
+    },
+  })
+
+  if (votesForPost.length > 0) {
+    await prisma.vote.deleteMany({
+      where: {
+        postId: parseInt(postId),
+      },
+    })
+  }
+
+
   const deletedPost = await prisma.post.delete({
     where: {
       id: Number(postId),
@@ -35,6 +53,7 @@ export async function DELETE(request: NextRequest, { params }: paramsProps) {
 
   return NextResponse.json(deletedPost)
 }
+
 
 export async function POST(request: NextRequest, { params }: paramsProps) {
   try {
