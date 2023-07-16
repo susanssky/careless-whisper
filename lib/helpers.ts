@@ -25,7 +25,16 @@ export async function getPost(postId: string) {
 export async function UserServerSession() {
   return await getServerSession(authOptions)
 }
-
+export async function getAllSyllabuses() {
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/syllabuses`)
+  // console.log(res)
+  if (!res.ok) throw new Error("failed to fetch data")
+  const syllabusesData: SyllabusType[] = await res.json()
+  // console.log(syllabusesData)
+  const syllabuses = syllabusesData.sort((a, b) => a.id - b.id)
+  // console.log(syllabusesData)
+  return syllabuses
+}
 //---api---
 //post select content in Prisma
 export const postSelectContent = {
@@ -36,7 +45,7 @@ export const postSelectContent = {
   duration: true,
   viewsNum: true,
   votesNum: true,
-  syllabus: { select: { name: true } },
+  syllabus: { select: { name: true, link: true } },
   cohort: { select: { name: true } },
   user: { select: { name: true } },
   transcription: {

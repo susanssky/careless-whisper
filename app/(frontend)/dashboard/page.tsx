@@ -12,6 +12,8 @@ export default async function Dashboard() {
   const session = await UserServerSession()
   // console.log(posts)
 
+  // console.log(session?.user)
+
   return (
     <section className="container py-10">
       Hi {session?.user?.name}, You are {session?.user?.role}

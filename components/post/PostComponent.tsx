@@ -51,6 +51,7 @@ export default function PostComponent({ post, session }: PostComponentProps) {
 
     if (success) {
       router.push("/dashboard")
+      router.refresh()
     } else {
       console.error("Failed to delete post")
     }
@@ -83,14 +84,22 @@ export default function PostComponent({ post, session }: PostComponentProps) {
       <Card>
         <CardHeader>
           <CardTitle>
-            {cohort.name} {syllabus.name}
+            {cohort.name}{" "}
+            <Link href={syllabus.link} target="_blank">
+              {syllabus.name}
+            </Link>
             <br />
             <p className="text-base">
               {sessionName} by {leaderName}
             </p>
           </CardTitle>
           <CardDescription>
-            {originalVideoLink && `Video: ${originalVideoLink}`}
+            {originalVideoLink &&
+              `Video: ${(
+                <Link href={originalVideoLink} target="_blank">
+                  {originalVideoLink}
+                </Link>
+              )}`}
             <div className="flex justify-start gap-2">
               <Badge>duration: {duration}min(s)</Badge>
               <Badge>views: {viewsNum}</Badge> <Badge>votes: {votesNum}</Badge>

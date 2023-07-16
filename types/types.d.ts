@@ -34,6 +34,7 @@ type PostType = {
   votesNum: number
   syllabus: {
     name: string
+    link: string
   }
   cohort: {
     name: string
