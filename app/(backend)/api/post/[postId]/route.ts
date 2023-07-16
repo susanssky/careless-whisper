@@ -1,8 +1,14 @@
-import { revalidatePath } from "next/cache"
-import { NextRequest, NextResponse } from "next/server"
+import { revalidatePath } from "next/cache";
+import { NextRequest, NextResponse } from "next/server";
 
-import { postSelectContent } from "@/lib/helpers"
-import { prisma } from "@/lib/prisma"
+
+
+import { postSelectContent } from "@/lib/helpers";
+import { prisma } from "@/lib/prisma";
+
+
+
+
 
 type paramsProps = { params: { postId: string } }
 
@@ -28,4 +34,23 @@ export async function DELETE(request: NextRequest, { params }: paramsProps) {
   })
 
   return NextResponse.json(deletedPost)
+}
+
+export async function POST(request: NextRequest, { params }: paramsProps) {
+  try {
+     const { postId } = params
+
+    if (!postId) {
+      return new Response("Post ID is missing", { status: 400 })
+    }
+
+    const viewedPost = await prisma.post.update({
+      where: { id: parseInt(postId) },
+      data: { viewsNum: { increment: 1 } },
+    })
+    return NextResponse.json(viewedPost)
+  } catch (error: any) {
+    console.error("Error updating views:", error)
+    return new Response("Internal Server Error", { status: 500 })
+  }
 }
