@@ -134,53 +134,79 @@ const handleVote = async () => {
   return (
     <>
       {edit ? (
-        <form onSubmit={handleSubmit}>
-          <label>
-            Cohort Name:
+         <form onSubmit={handleSubmit} className="bg-white rounded shadow p-4 mb-4">
+     <div className="mb-4">
+            <label htmlFor="cohortName" className="block text-sm font-medium text-gray-700">
+              Cohort Name:
+            </label>
             <input
               type="text"
               name="cohortName"
+              id="cohortName"
               value={postData.cohortName}
               onChange={handleInputChange}
+              className="mt-1 px-3 py-2 w-full border rounded-md focus:ring-blue-500 focus:border-blue-500"
             />
-          </label>
-          <label>
-            Syllabus Name:
+          </div>
+                 <div className="mb-4">
+            <label htmlFor="syllabusName" className="block text-sm font-medium text-gray-700">
+              Syllabus Name:
+            </label>
             <input
               type="text"
               name="syllabusName"
+              id="syllabusName"
               value={postData.syllabusName}
               onChange={handleInputChange}
+              className="mt-1 px-3 py-2 w-full border rounded-md focus:ring-blue-500 focus:border-blue-500"
             />
-          </label>
-          <label>
+          </div>
+          <div className="mb-4">
+          <label htmlFor="sessionName" className="block text-sm font-medium text-gray-700">
             Session Name:
-            <input
-              type="text"
-              name="sessionName"
-              value={postData.sessionName}
-              onChange={handleInputChange}
-            />
           </label>
-          <label>
+          <input
+            type="text"
+            name="sessionName"
+            id="sessionName"
+            value={postData.sessionName}
+            onChange={handleInputChange}
+            className="mt-1 px-3 py-2 w-full border rounded-md focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+            <div className="mb-4">
+          <label htmlFor="leaderName" className="block text-sm font-medium text-gray-700">
             Leader Name:
-            <input
-              type="text"
-              name="leaderName"
-              value={postData.leaderName}
-              onChange={handleInputChange}
-            />
           </label>
-          <label>
+          <input
+            type="text"
+            name="leaderName"
+            id="leaderName"
+            value={postData.leaderName}
+            onChange={handleInputChange}
+            className="mt-1 px-3 py-2 w-full border rounded-md focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="summary" className="block text-sm font-medium text-gray-700">
             Summary:
-            <textarea
-              name="summary"
-              value={postData.summary}
-              onChange={handleInputChange}
-            />
           </label>
-          <Button type="submit">Save</Button>
-          <Button onClick={() => setEdit(false)}>Cancel</Button>
+          <textarea
+            name="summary"
+            id="summary"
+            value={postData.summary}
+            onChange={handleInputChange}
+            className="mt-1 px-3 py-2 w-full border rounded-md focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+            <div className="flex justify-end space-x-4">
+          <Button type="submit" >
+            Save
+          </Button>
+          <Button onClick={() => setEdit(false)} >
+            Cancel
+          </Button>
+        </div>
         </form>
       ) : (
         <>
