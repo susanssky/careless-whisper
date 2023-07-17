@@ -73,3 +73,53 @@ export async function POST(request: NextRequest, { params }: paramsProps) {
     return new Response("Internal Server Error", { status: 500 })
   }
 }
+
+
+
+export async function PUT(request: NextRequest, { params }: paramsProps) {
+  try {
+    const { postId } = params
+
+    if (!postId) {
+      return new Response("Post ID is missing", { status: 400 })
+    }
+
+    const {
+      cohortName,
+      syllabusName,
+      sessionName,
+      leaderName,
+      summary,
+    } = await request.json();
+
+    const cohort = await prisma.cohort.upsert({
+      where: { name: cohortName },
+      create: { name: cohortName },
+      update: {},
+    });
+
+    const syllabus = await prisma.syllabus.upsert({
+      where: { name: syllabusName },
+      create: { name: syllabusName },
+      update: {},
+    });
+
+    const updatedPost = await prisma.post.update({
+      where: { id: parseInt(postId) },
+      data: {
+        sessionName,
+        leaderName,
+        cohort: { connect: { id: cohort.id } },
+        syllabus: { connect: { id: syllabus.id } },
+        summary,
+      },
+    });
+
+    return NextResponse.json(updatedPost)
+  } catch (error: any) {
+    console.error("Error updating post", error);
+    return new Response("Internal Server Error", { status: 500 })
+  } finally {
+    prisma.$disconnect();
+  }
+}
