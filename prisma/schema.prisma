@@ -88,6 +88,7 @@ model Post {
     cohortId          Int
     transcription     Transcription?
     summary           String?
+     votes            Vote[]
 }
 
 model Cohort {
@@ -124,3 +125,14 @@ model SearchQuery {
     query     String
     createdAt DateTime @default(now())
 }
+
+model Vote{
+     id        Int      @id @default(autoincrement())
+     userId String
+     post     Post @relation(fields: [postId], references: [id])
+     postId Int
+     createdAt DateTime @default(now())
+     @@unique([userId,postId])
+
+}
+

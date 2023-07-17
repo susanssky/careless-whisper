@@ -1,26 +1,22 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { ThickArrowUpIcon } from "@radix-ui/react-icons"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ThickArrowUpIcon } from "@radix-ui/react-icons";
 
-import { deletePost } from "@/lib/deletePost"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+
+
+import { deletePost } from "@/lib/deletePost";
+import { voteTranscription } from "@/lib/voteTranscription";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+
+
+
+
 
 type PostComponentProps = {
   post: PostType
@@ -28,6 +24,10 @@ type PostComponentProps = {
 }
 export default function PostComponent({ post, session }: PostComponentProps) {
   const router = useRouter()
+
+
+
+
   const {
     id,
     cohort,
@@ -47,6 +47,39 @@ export default function PostComponent({ post, session }: PostComponentProps) {
   const article = transcription.sentences
     .map((sentence: { content: string }) => sentence.content)
     .join(" ")
+
+  const [voted, setVoted] = useState(() => {
+    const hasVoted = localStorage.getItem(`voted_${id}_${session.user.id}`);
+    return hasVoted ? true : false;
+  });
+
+  const [error, setError] = useState("");
+
+
+const handleVote = async () => {
+  if (!voted) {
+    try {
+      const updatedPost = await voteTranscription(id, session.user.id)
+      if (updatedPost) {
+        setVoted(true)
+        localStorage.setItem(`voted_${id}_${session.user.id}`, "true")
+      
+        alert("Thank you for voting!")
+        setError("")
+      } else {
+        setError("Failed to vote. Please try again.")
+      }
+    } catch (error) {
+      console.error("Failed to vote:", error)
+      setError("Failed to vote. Please try again.")
+    }
+  } else {
+  
+    alert("You have already voted. Thank you for your participation!")
+  }
+}
+
+
   const handleDelete = async (postId: number) => {
     const success = await deletePost(postId.toString())
 
@@ -77,10 +110,11 @@ export default function PostComponent({ post, session }: PostComponentProps) {
           </>
         )}
 
-        <Button>
-          <ThickArrowUpIcon className="mr-2 h-4 w-4" />
-          vote
-        </Button>
+         <Button onClick={handleVote} disabled={voted}>
+  <ThickArrowUpIcon className="mr-2 h-4 w-4" />
+  {voted ? "Voted" : "Vote"}
+</Button>
+
       </div>
       <Card>
         <CardHeader>
