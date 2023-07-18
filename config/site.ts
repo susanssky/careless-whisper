@@ -5,6 +5,11 @@ export const siteConfig = {
   description: "Using Whisper to transcribe the study sessions",
   mainNav: [
     {
+      title: "Home",
+      href: "/homepage",
+      isMentor: false,
+    },
+    {
       title: "List of transcripts",
       href: "/dashboard",
       isMentor: false,
