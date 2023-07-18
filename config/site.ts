@@ -14,5 +14,10 @@ export const siteConfig = {
       href: "/dashboard/create-post",
       isMentor: true,
     },
+    {
+      title: "How to use",
+      href: "/dashboard/tutorial",
+      isMentor: true,
+    },
   ],
 }

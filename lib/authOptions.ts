@@ -18,18 +18,16 @@ export const authOptions: AuthOptions = {
   },
   //   debug: process.env.NODE_ENV === "development",
   pages: {
-    error: "/",
-    signIn: "/dashboard",
-    signOut: "/",
+    signIn: "/login-failed",
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
-      // console.log(user)
-      // console.log(account)
-      // console.log(profile)
+    // async signIn({ user, account, profile }) {
+    // console.log(user)
+    // console.log(account)
+    // console.log(profile)
 
-      return true
-    },
+    // return true
+    // },
     // async redirect({ url, baseUrl }) {
     //   // Allows relative callback URLs
     //   console.log(url, baseUrl)
