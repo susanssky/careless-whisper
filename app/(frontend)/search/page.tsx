@@ -5,6 +5,7 @@ import useSWR from "swr"
 
 import LoadingComponent from "@/components/dashboard/Loading"
 import Sentences from "@/components/search/Sentences"
+import PostTable from "@/components/search/SearchPostTable"
 
 const fetchPosts = async (url: string) => {
   const response = await fetch(url)
@@ -41,15 +42,16 @@ const SearchPage = () => {
     return <div>No results found for: {searchQuery}</div>
   }
 
-  return (
-    <>
-      <span className="text-xl">
+   return (
+       <div className="mt-8 p-4">
+      <span className="text-2xl font-semibold">
         Showing results for:{" "}
-        <span className="font-semibold">{searchQuery}</span>
+        <span className="text-red-500">{searchQuery}</span>
       </span>
-      <Sentences sentences={data} />
-    </>
-  )
-}
+      <PostTable posts={data} />
+    </div>
+
+  );
+};
 
 export default SearchPage

@@ -1,16 +1,24 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server";
 
-import { prisma } from "@/lib/prisma"
+
+
+import { prisma } from "@/lib/prisma";
+
+
+
+
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const query = searchParams && searchParams.get("q")
-try {
+  try {
     if (!query || query.length < 3) {
-      throw new Error("Invalid request: Query must be at least three characters long")
+      throw new Error(
+        "Invalid request: Query must be at least three characters long"
+      )
     }
 
-    const sentences = await prisma.sentence.findMany({
+    const posts = await prisma.post.findMany({
       where: {
         transcription: {
           sentences: {
@@ -24,7 +32,13 @@ try {
         },
       },
       include: {
-        transcription: true,
+        transcription: {
+          include: {
+            sentences: true,
+          },
+        },
+        cohort: true, 
+        syllabus: true, 
       },
     })
 
@@ -34,7 +48,7 @@ try {
       },
     })
 
-    return NextResponse.json(sentences)
+    return NextResponse.json(posts)
   } catch (error: any) {
     console.error(error)
     return new Response(error.message, { status: 500 })
