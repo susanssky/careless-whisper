@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 const AdvancedSearchInput = () => {
   const [showInputs, setShowInputs] = useState(false)
@@ -37,85 +37,80 @@ const AdvancedSearchInput = () => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       event.preventDefault()
-      onSearch(event as React.FormEvent)
+      onSearch(event)
     }
   }
 
   return (
-    <>
-      {" "}
+    <div className="flex flex-col space-y-4">
       {!showInputs && (
         <button
           onClick={toggleInputs}
-          className="px-5 py-1 w-1/7 sm:px-5 sm:py-3 flex-1 text-zinc-200 bg-zinc-800 focus:bg-black rounded-full focus:outline-none focus:ring-[1px] focus:ring-green-700 placeholder:text-zinc-400 ml-5"
+          className="ml-5 px-6 py-3 w-44 text-white bg-red-500 rounded-full focus:outline-none focus:ring focus:ring-green-200 hover:bg-red-600 transition-all duration-200"
         >
           Advanced Search
         </button>
       )}
-      <form onSubmit={onSearch} className="flex justify-center w-1/3 ml-5 my-5">
-        {showInputs && (
-          <>
-            <input
-              value={keywords}
-              onChange={(event) => setKeywords(event.target.value)}
-              className="input-field"
-              placeholder="Keywords"
-              onKeyPress={handleKeyPress}
-            />
 
-            <input
-              value={user}
-              onChange={(event) => setUser(event.target.value)}
-              className="input-field"
-              placeholder="User"
-              onKeyPress={handleKeyPress}
-            />
+      {showInputs && (
+        <form onSubmit={onSearch} className="flex flex-col space-y-4">
+          <input
+            value={keywords}
+            onChange={(event) => setKeywords(event.target.value)}
+            className="input-field w-60 focus:border-red-500"
+            placeholder="Keywords"
+            onKeyPress={handleKeyPress}
+          />
 
-            <input
-              value={leader}
-              onChange={(event) => setLeader(event.target.value)}
-              className="input-field"
-              placeholder="Leader"
-              onKeyPress={handleKeyPress}
-            />
+          <input
+            value={user}
+            onChange={(event) => setUser(event.target.value)}
+            className="input-field w-60 focus:border-red-500"
+            placeholder="User"
+            onKeyPress={handleKeyPress}
+          />
 
-            <input
-              value={cohort}
-              onChange={(event) => setCohort(event.target.value)}
-              className="input-field"
-              placeholder="Cohort"
-              onKeyPress={handleKeyPress}
-            />
+          <input
+            value={leader}
+            onChange={(event) => setLeader(event.target.value)}
+            className="input-field w-60 focus:border-red-500"
+            placeholder="Leader"
+            onKeyPress={handleKeyPress}
+          />
 
-            <input
-              value={syllabusModule}
-              onChange={(event) => setSyllabusModule(event.target.value)}
-              className="input-field"
-              placeholder="Syllabus"
-              onKeyPress={handleKeyPress}
-            />
+          <input
+            value={cohort}
+            onChange={(event) => setCohort(event.target.value)}
+            className="input-field w-60 focus:border-red-500"
+            placeholder="Cohort"
+            onKeyPress={handleKeyPress}
+          />
 
-            <input
-              value={duration}
-              onChange={(event) => setDuration(event.target.value)}
-              className="input-field"
-              placeholder="Duration"
-              onKeyPress={handleKeyPress}
-            />
-          </>
-        )}
+          <input
+            value={syllabusModule}
+            onChange={(event) => setSyllabusModule(event.target.value)}
+            className="input-field w-60 focus:border-red-500"
+            placeholder="Syllabus"
+            onKeyPress={handleKeyPress}
+          />
 
-        <style jsx>{`
-          .input-field {
-            width: 100%;
-            padding: 8px;
-            margin-top: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-          }
-        `}</style>
-      </form>
-    </>
+          <input
+            value={duration}
+            onChange={(event) => setDuration(event.target.value)}
+            className="input-field w-60 focus:border-red-500"
+            placeholder="Duration"
+            onKeyPress={handleKeyPress}
+          />
+
+          <button
+            type="submit"
+            className="px-6 py-3 w-44 text-white bg-red-500 rounded-full focus:outline-none focus:ring focus:ring-blue-200 hover:bg-red-600 transition-all duration-200"
+          >
+            Search
+          </button>
+        </form>
+      )}
+    </div>
   )
 }
 
