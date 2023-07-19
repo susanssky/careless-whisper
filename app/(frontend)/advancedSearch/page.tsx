@@ -2,10 +2,12 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
-import LoadingComponent from "@/components/dashboard/Loading"
 
 
+
+import LoadingComponent from "@/components/dashboard/Loading";
 import SearchPostTable from "@/components/search/SearchPostTable";
+
 
 
 
@@ -26,6 +28,7 @@ const AdvancedSearchPage = () => {
 
   const searchUser = searchParams ? searchParams.get("user") : null
   const searchKeyword = searchParams ? searchParams.get("keywords") : null
+   const searchLeader= searchParams ? searchParams.get("leader") : null
   const searchCohort = searchParams ? searchParams.get("cohort") : null
   const searchSyllabusModule = searchParams
     ? searchParams.get("syllabusModule")
@@ -34,13 +37,15 @@ const AdvancedSearchPage = () => {
 
   const encodedSearchUser = encodeURI(searchUser || "")
   const encodedSearchKeyword = encodeURI(searchKeyword || "")
-
+  const encodedSearchLeader = encodeURI(searchLeader || "")
   const encodedSearchCohort = encodeURI(searchCohort || "")
   const encodedSearchSyllabusModule = encodeURI(searchSyllabusModule || "")
   const encodedSearchDuration = encodeURI(searchDuration || "")
 
 const { data, isLoading } = useSWR(
-  `/api/asearch?user=${encodedSearchUser}&keywords=${encodeURIComponent(encodedSearchKeyword)}&cohort=${encodedSearchCohort}&syllabusModule=${encodedSearchSyllabusModule}&duration=${encodedSearchDuration}`,
+  `/api/asearch?user=${encodedSearchUser}&keywords=${encodeURIComponent(
+    encodedSearchKeyword
+  )}&cohort=${encodedSearchCohort}&syllabusModule=${encodedSearchSyllabusModule}&duration=${encodedSearchDuration}&leader=${encodedSearchLeader}`,
   fetchSearchResults,
   { revalidateOnFocus: false }
 )
@@ -57,6 +62,7 @@ const { data, isLoading } = useSWR(
     Cohort: searchCohort,
     "Syllabus Module": searchSyllabusModule,
     Duration: searchDuration,
+    Leader: searchLeader,
   }
 
   const displayedParams = Object.entries(submittedParams).map(
