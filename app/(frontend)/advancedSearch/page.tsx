@@ -5,7 +5,7 @@ import useSWR from "swr";
 import LoadingComponent from "@/components/dashboard/Loading"
 
 
-import Sentences from "@/components/search/Sentences";
+import SearchPostTable from "@/components/search/SearchPostTable";
 
 
 
@@ -54,7 +54,7 @@ const { data, isLoading } = useSWR(
   const submittedParams = {
     User: searchUser,
     Keywords: searchKeyword,
-    Category: searchCohort,
+    Cohort: searchCohort,
     "Syllabus Module": searchSyllabusModule,
     Duration: searchDuration,
   }
@@ -79,12 +79,16 @@ const { data, isLoading } = useSWR(
   }
 
   return (
-    <>
-      <span className="text-xl">Showing results for:</span>
-      <ul>{displayedParams}</ul>
-      {data && <Sentences sentences={data} />} 
-    </>
-  )
-}
 
+       <div className="mt-8 p-4">
+      <span className="text-2xl font-semibold">
+        Showing results for:{" "}
+        <span className="text-red-500">{displayedParams}</span>
+      </span>
+      <SearchPostTable posts={data} />
+    </div>
+
+  );
+}
+ 
 export default AdvancedSearchPage

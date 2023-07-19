@@ -4,8 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import useSWR from "swr"
 
 import LoadingComponent from "@/components/dashboard/Loading"
-import Sentences from "@/components/search/Sentences"
-import PostTable from "@/components/search/SearchPostTable"
+import SearchPostTable from "@/components/search/SearchPostTable"
 
 const fetchPosts = async (url: string) => {
   const response = await fetch(url)
@@ -48,7 +47,7 @@ const SearchPage = () => {
         Showing results for:{" "}
         <span className="text-red-500">{searchQuery}</span>
       </span>
-      <PostTable posts={data} />
+      <SearchPostTable posts={data} />
     </div>
 
   );

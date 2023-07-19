@@ -18,7 +18,7 @@ interface PostTableProps {
   posts: Post[];
 }
 
-const PostTable = ({ posts }: PostTableProps) => {
+const SearchPostTable = ({ posts }: PostTableProps) => {
   return (
     <div className="mt-4"> 
       <table className="w-full border-collapse border border-red-500">
@@ -48,4 +48,4 @@ const PostTable = ({ posts }: PostTableProps) => {
   );
 };
 
-export default PostTable;
+export default SearchPostTable;
