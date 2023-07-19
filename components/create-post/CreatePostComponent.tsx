@@ -1,6 +1,7 @@
 "use client"
 
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 //----left card------
 import { CaretSortIcon, CheckIcon, UpdateIcon } from "@radix-ui/react-icons"
 import { Configuration, OpenAIApi } from "openai"
@@ -59,6 +60,7 @@ type PropsType = {
 }
 
 export default function CreatePostForm({ syllabusesName, session }: PropsType) {
+  const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -194,6 +196,7 @@ export default function CreatePostForm({ syllabusesName, session }: PropsType) {
 
       const result = await res.json()
       toastSuccess()
+
       setData({
         cohortName: { open: false, value: "" },
         syllabusName: { open: false, value: "" },
@@ -210,7 +213,7 @@ export default function CreatePostForm({ syllabusesName, session }: PropsType) {
       }
 
       // console.log(result)
-
+      router.refresh()
       return result
     } catch (err) {
       console.error(err)

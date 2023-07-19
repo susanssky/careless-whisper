@@ -1,40 +1,28 @@
-"use client";
+"use client"
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react"
+import { useRouter } from "next/navigation"
 
-
-
-import { viewTranscription } from "@/lib/viewTranscription";
-
-
-
-
+import { viewTranscription } from "@/lib/viewTranscription"
 
 export default function DashboardTableTr({ post }: DashboardTableTrPropsType) {
   const router = useRouter()
   const [viewsNum, setViewsNum] = useState(post.viewsNum)
 
-const handleClick = async () => {
-  try {
- 
-    const updatedPost = await viewTranscription(post.id)
+  const handleClick = async () => {
+    try {
+      const updatedPost = await viewTranscription(post.id)
 
-  
-    if (updatedPost !== null) {
-     
-         setViewsNum(updatedPost?.viewsNum ?? 0)
+      if (updatedPost !== null) {
+        setViewsNum(updatedPost?.viewsNum ?? 0)
+      }
+
+      router.refresh()
+      router.push(`/dashboard/posts/${post.id}`)
+    } catch (error) {
+      console.error("Error navigating to post:", error)
     }
-
-
-    router.push(`/dashboard/posts/${post.id}`)
-  } catch (error) {
-    console.error("Error navigating to post:", error)
   }
-}
-
-
-
 
   return (
     <tr
