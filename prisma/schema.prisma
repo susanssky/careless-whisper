@@ -11,25 +11,25 @@ datasource db {
 }
 
 model Sentence {
-    id              Int           @id @default(autoincrement())
+    id              Int       @id @default(autoincrement())
     lineNumber      String
     startTime       String
     endTime         String
     content         String
-    createdAt       DateTime      @default(now())
-    updatedAt       DateTime      @updatedAt
-    transcription   Transcription @relation(fields: [transcriptionId], references: [id], onDelete: Cascade)
-    transcriptionId Int
+    createdAt       DateTime  @default(now())
+    updatedAt       DateTime  @updatedAt
+    post            Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId          Int
 }
 
-model Transcription {
-    id        Int        @id @default(autoincrement())
-    sentences Sentence[]
-    createdAt DateTime   @default(now())
-    updatedAt DateTime   @updatedAt
-    post      Post?      @relation(fields: [postId], references: [id])
-    postId    Int?       @unique
-}
+// model Transcription {
+//     id        Int        @id @default(autoincrement())
+//     sentences Sentence[]
+//     createdAt DateTime   @default(now())
+//     updatedAt DateTime   @updatedAt
+//     post      Post?      @relation(fields: [postId], references: [id])
+//     postId    Int?       @unique
+// }
 
 model Account {
     id                String  @id @default(cuid())
@@ -86,9 +86,10 @@ model Post {
     createdAt         DateTime       @default(now())
     updatedAt         DateTime       @updatedAt
     cohortId          Int
-    transcription     Transcription?
+    sentences         Sentence[]     
     summary           String?
-     votes            Vote[]
+    votes             Vote[]
+  
 }
 
 model Cohort {
@@ -135,4 +136,3 @@ model Vote{
      @@unique([userId,postId])
 
 }
-
