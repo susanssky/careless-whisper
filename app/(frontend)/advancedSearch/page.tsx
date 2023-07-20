@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 
@@ -28,7 +29,7 @@ const AdvancedSearchPage = () => {
 
   const searchUser = searchParams ? searchParams.get("user") : null
   const searchKeyword = searchParams ? searchParams.get("keywords") : null
-   const searchLeader= searchParams ? searchParams.get("leader") : null
+  const searchLeader = searchParams ? searchParams.get("leader") : null
   const searchCohort = searchParams ? searchParams.get("cohort") : null
   const searchSyllabusModule = searchParams
     ? searchParams.get("syllabusModule")
@@ -42,15 +43,13 @@ const AdvancedSearchPage = () => {
   const encodedSearchSyllabusModule = encodeURI(searchSyllabusModule || "")
   const encodedSearchDuration = encodeURI(searchDuration || "")
 
-const { data, isLoading } = useSWR(
-  `/api/asearch?user=${encodedSearchUser}&keywords=${encodeURIComponent(
-    encodedSearchKeyword
-  )}&cohort=${encodedSearchCohort}&syllabusModule=${encodedSearchSyllabusModule}&duration=${encodedSearchDuration}&leader=${encodedSearchLeader}`,
-  fetchSearchResults,
-  { revalidateOnFocus: false }
-)
-
-
+  const { data, isLoading } = useSWR(
+    `/api/asearch?user=${encodedSearchUser}&keywords=${encodeURIComponent(
+      encodedSearchKeyword
+    )}&cohort=${encodedSearchCohort}&syllabusModule=${encodedSearchSyllabusModule}&duration=${encodedSearchDuration}&leader=${encodedSearchLeader}`,
+    fetchSearchResults,
+    { revalidateOnFocus: false }
+  )
 
   if (isLoading) {
     return <LoadingComponent />
@@ -65,36 +64,54 @@ const { data, isLoading } = useSWR(
     Leader: searchLeader,
   }
 
-  const displayedParams = Object.entries(submittedParams).map(
-    ([key, value]) => {
+  const displayedParams = Object.entries(submittedParams)
+    .map(([key, value]) => {
       if (value) {
-        return (
-          <li key={key}>
-            {key}: <span className="font-semibold">{value}</span>
-          </li>
-        )
+        return `${key}: ${value}`
       }
       return null
-    }
-  )
+    })
+    .filter(Boolean)
+    .join(", ")
+
+  const NoResultsMessage = ({
+    displayedParams,
+  }: {
+    displayedParams: string
+  }) => {
+    return (
+      <div className="flex flex-col items-center">
+        <div className="text-4xl text-gray-500 mb-4">😞</div>
+        <div className="text-xl text-gray-600">
+          Oops! No results found for:{" "}
+          <span className="text-red-500">{displayedParams}</span>
+        </div>
+        <div className="text-sm text-gray-500 mt-2">
+          <Link href="/" className="text-red-500">
+            search again
+          </Link>{" "}
+        </div>
+      </div>
+    )
+  }
 
   if (!data || data.length === 0) {
-    return <div>
-      No results found for: {displayedParams}
+    return (
+      <div>
+        <NoResultsMessage displayedParams={displayedParams} />
       </div>
+    )
   }
 
   return (
-
-       <div className="mt-8 p-4">
+    <div className="mt-8 p-4">
       <span className="text-2xl font-semibold">
         Showing results for:{" "}
         <span className="text-red-500">{displayedParams}</span>
       </span>
       <SearchPostTable posts={data} />
     </div>
-
-  );
+  )
 }
- 
+
 export default AdvancedSearchPage

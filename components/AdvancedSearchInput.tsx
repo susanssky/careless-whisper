@@ -100,7 +100,7 @@ const AdvancedSearchInput = () => {
               list="cohortSuggestions"
             />
 
-          
+{/*           
             <input
               value={keywords}
               onClick={() =>
@@ -112,7 +112,7 @@ const AdvancedSearchInput = () => {
               className="input-field w-full px-4 py-2 rounded-md focus:outline-none focus:border-red-500 focus:ring-red-500"
               placeholder="Keywords"
               list="keywordsSuggestions"
-            />
+            /> */}
 
             <input
               value={user}
