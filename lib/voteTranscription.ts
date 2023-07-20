@@ -28,3 +28,28 @@ export async function voteTranscription(
     return null
   }
 }
+
+
+export async function cancelVoteTranscription(
+  postId: number,
+  userId: string
+): Promise<Post | null> {
+  try {
+    const response = await fetch(`/api/cancel-vote?postId=${postId}&userId=${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const canceledPost = await response.json()
+      return canceledPost as Post;
+    } else {
+      throw new Error("Failed to cancel vote");
+    }
+  } catch (error) {
+    console.error("Failed to cancel vote:", error);
+    return null;
+  }
+}
