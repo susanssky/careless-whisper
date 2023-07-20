@@ -8,7 +8,7 @@ export async function voteTranscription(
 ): Promise<Post | null> {
   try {
     const response = await fetch(
-      `/api/vote?postId=${postId}&userId=${userId}`,
+      `/api/vote/upvote?postId=${postId}&userId=${userId}`,
       {
         method: "POST",
         headers: {
@@ -35,7 +35,7 @@ export async function cancelVoteTranscription(
   userId: string
 ): Promise<Post | null> {
   try {
-    const response = await fetch(`/api/cancel-vote?postId=${postId}&userId=${userId}`, {
+    const response = await fetch(`/api/vote/cancel-vote?postId=${postId}&userId=${userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
