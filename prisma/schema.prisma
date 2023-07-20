@@ -89,6 +89,7 @@ model Post {
     transcription     Transcription?
     summary           String?
      votes            Vote[]
+     feedbacks         Feedback[] 
 }
 
 model Cohort {
@@ -136,3 +137,11 @@ model Vote{
 
 }
 
+model Feedback {
+  id          Int      @id @default(autoincrement())
+  text        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  post        Post     @relation(fields: [postId], references: [id])
+  postId      Int
+}
