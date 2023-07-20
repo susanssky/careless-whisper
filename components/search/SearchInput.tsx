@@ -40,14 +40,22 @@ const SearchInput = () => {
   }
 
   return (
-    <form onSubmit={onSearch} className="flex justify-center w-1/3 ml-5 my-5">
-      <input
-        value={searchQuery || ""}
-        onChange={handleSearchQueryChange}
-        className="px-5 py-1 w-2/3 sm:px-5 sm:py-3 flex-1 text-zinc-200 bg-zinc-800 focus:bg-black rounded-full focus:outline-none focus:ring-[1px] focus:ring-green-700 placeholder:text-zinc-400"
-        placeholder="Search the text here..."
-      />
-      {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+      <form onSubmit={onSearch} className="w-full max-w-md mx-auto">
+      <div className="flex items-center border border-red-600 rounded-full shadow-md">
+        <input
+          value={searchQuery || ""}
+          onChange={handleSearchQueryChange}
+          className="w-full px-4 py-2 rounded-full focus:outline-none focus:ring focus:ring-red-400 text-zinc-700 placeholder:text-z"
+          placeholder="Search the text here..."
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 focus:outline-none focus:bg-red-700"
+        >
+          Search
+        </button>
+      </div>
+      {errorMessage && <div className="text-red-500 mt-2">{errorMessage}</div>}
     </form>
   )
 }
