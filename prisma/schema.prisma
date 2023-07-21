@@ -11,18 +11,25 @@ datasource db {
 }
 
 model Sentence {
-    id              Int       @id @default(autoincrement())
+    id              Int           @id @default(autoincrement())
     lineNumber      String
     startTime       String
     endTime         String
     content         String
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
-    transcription    Transcription     @relation(fields: [transcriptionId], references: [id], onDelete: Cascade)
-    transcriptionId          Int
+    createdAt       DateTime      @default(now())
+    updatedAt       DateTime      @updatedAt
+    transcription   Transcription @relation(fields: [transcriptionId], references: [id], onDelete: Cascade)
+    transcriptionId Int
 }
 
-
+model Transcription {
+    id        Int        @id @default(autoincrement())
+    sentences Sentence[]
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+    post      Post?      @relation(fields: [postId], references: [id])
+    postId    Int?       @unique
+}
 
 model Account {
     id                String  @id @default(cuid())
@@ -38,7 +45,7 @@ model Account {
     id_token          String? @db.Text
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    transcriptionId           String?
+    postId            String?
 
     @@unique([provider, providerAccountId])
 }
@@ -53,7 +60,7 @@ model User {
     accounts      Account[]
     createdAt     DateTime  @default(now())
     updatedAt     DateTime  @updatedAt
-    transcription       Transcription[]
+    posts         Post[]
     Session       Session[]
 }
 
@@ -62,7 +69,7 @@ enum Role {
     Mentor
 }
 
-model Transcription {
+model Post {
     id                Int            @id @default(autoincrement())
     cohort            Cohort         @relation(fields: [cohortId], references: [id])
     syllabus          Syllabus       @relation(fields: [syllabusId], references: [id])
@@ -79,23 +86,22 @@ model Transcription {
     createdAt         DateTime       @default(now())
     updatedAt         DateTime       @updatedAt
     cohortId          Int
-    sentences         Sentence[]     
+    transcription     Transcription?
     summary           String?
-    votes             Vote[]
-  
+     votes            Vote[]
 }
 
 model Cohort {
     id   Int    @id @default(autoincrement())
     name String @unique
-    transcription Transcription[]
+    post Post[]
 }
 
 model Syllabus {
     id   Int     @id @default(autoincrement())
     name String  @unique
     link String? @unique
-      transcription Transcription[]
+    post Post[]
 }
 
 model Session {
@@ -120,13 +126,12 @@ model SearchQuery {
     createdAt DateTime @default(now())
 }
 
-model Vote {
-  id            Int          @id @default(autoincrement())
-  userId        String
-  transcription Transcription @relation(fields: [transcriptionId], references: [id])
-  transcriptionId Int
-  createdAt     DateTime     @default(now())
+model Vote{
+     id        Int      @id @default(autoincrement())
+     userId String
+     post     Post @relation(fields: [postId], references: [id])
+     postId Int
+     createdAt DateTime @default(now())
+     @@unique([userId,postId])
 
-  @@unique([userId, transcriptionId])
 }
-
