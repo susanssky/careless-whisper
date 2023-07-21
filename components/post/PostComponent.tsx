@@ -8,6 +8,7 @@ import { ThickArrowDownIcon, ThickArrowUpIcon } from "@radix-ui/react-icons";
 
 
 import { deletePost } from "@/lib/deletePost";
+import FeedbackArea from "./FeedbackArea";
 import { updatePost } from "@/lib/updatePost";
 import { cancelVoteTranscription, voteTranscription } from "@/lib/voteTranscription";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -253,6 +254,7 @@ const handleCancelVote = async () => {
     <ThickArrowDownIcon className="mr-2 h-4 w-4" />
     {voted ? "Cancel Vote" : "Not Voted"}
   </Button>
+  <FeedbackArea postId={post.id} userId={session.user.id} />
           </div>
           <Card>
             <CardHeader>
