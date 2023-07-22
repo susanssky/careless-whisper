@@ -70,25 +70,6 @@ const handleVote = async () => {
   }
 }
 
-const handleCancelVote = async () => {
-  if (!voted) {
-    alert("You have not voted yet.")
-  }
-  try {
-    const canceledPost = await cancelVoteTranscription(id, session.user.id)
-    if (!canceledPost) {
-      throw new Error("Failed to cancel vote. Please try again.")
-    }
-    setVoted(false)
-    localStorage.removeItem(`voted_${id}_${session.user.id}`)
-    alert("Your vote has been cancelled.")
-    setError("")
-    router.refresh()
-  } catch (error) {
-    console.error("Failed to cancel vote:", error)
-    setError(error.message)
-  }
-  }
 
   const handleCancelVote = async () => {
     if (voted) {
