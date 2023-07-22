@@ -9,5 +9,6 @@ export default async function TranscriptDetails({
 }: PostDetails) {
   const post: PostType = await getPost(postId)
   const session = await UserServerSession()
+  // console.log(session)
   return <PostComponent post={post} session={session} />
 }
