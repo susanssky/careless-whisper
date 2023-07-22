@@ -1,32 +1,18 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { ThickArrowDownIcon, ThickArrowUpIcon } from "@radix-ui/react-icons"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ThickArrowDownIcon, ThickArrowUpIcon } from "@radix-ui/react-icons";
 
-import { deletePost } from "@/lib/deletePost"
-import { updatePost } from "@/lib/updatePost"
-import {
-  cancelVoteTranscription,
-  voteTranscription,
-} from "@/lib/voteTranscription"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { deletePost } from "@/lib/deletePost";
+import { updatePost } from "@/lib/updatePost";
+import { cancelVoteTranscription, voteTranscription } from "@/lib/voteTranscription";
+import FeedbackArea from "./FeedbackArea";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 type PostComponentProps = {
   post: PostType
@@ -64,28 +50,26 @@ export default function PostComponent({ post, session }: PostComponentProps) {
 
   const [error, setError] = useState("")
 
-  const handleVote = async () => {
-    if (!voted) {
-      try {
-        const updatedPost = await voteTranscription(id, session.user.id)
-        if (updatedPost) {
-          setVoted(true)
-          localStorage.setItem(`voted_${id}_${session.user.id}`, "true")
-
-          alert("Thank you for voting!")
-          setError("")
-          router.refresh()
-        } else {
-          setError("Failed to vote. Please try again.")
-        }
-      } catch (error) {
-        console.error("Failed to vote:", error)
-        setError("Failed to vote. Please try again.")
-      }
-    } else {
-      alert("You have already voted. Thank you for your participation!")
-    }
+const handleVote = async () => {
+  if (!voted) {
+    alert("You have already voted. Thank you for your participation!")
   }
+  try {
+    const updatedPost = await voteTranscription(id, session.user.id)
+    if (!updatedPost) {
+        throw new Error("Failed to vote. Please try again.")
+    }
+    setVoted(true)
+    localStorage.setItem(`voted_${id}_${session.user.id}`, "true")
+    alert("Thank you for voting!")
+    setError("")
+    router.refresh()
+  } catch (error:any) {
+    console.error("Failed to vote:", error)
+    setError(error.message)
+  }
+}
+
 
   const handleCancelVote = async () => {
     if (voted) {
@@ -111,13 +95,11 @@ export default function PostComponent({ post, session }: PostComponentProps) {
 
   const handleDelete = async (postId: number) => {
     const success = await deletePost(postId.toString())
-
-    if (success) {
-      router.push("/dashboard")
-      router.refresh()
-    } else {
+    if (!success) {
       console.error("Failed to delete post")
     }
+    router.push("/dashboard")
+    router.refresh()
   }
 
   const [edit, setEdit] = useState(false)
@@ -142,12 +124,11 @@ export default function PostComponent({ post, session }: PostComponentProps) {
 
     try {
       const success = await updatePost(post.id.toString(), postData)
-      if (success) {
-        setEdit(false)
-        router.refresh()
-      } else {
+      if (!success){
         setError("Failed to update post. Please try again.")
       }
+      setEdit(false)
+      router.refresh()
     } catch (error) {
       console.error("Failed to update post:", error)
       setError("Failed to update post. Please try again.")
@@ -269,10 +250,13 @@ export default function PostComponent({ post, session }: PostComponentProps) {
               <ThickArrowUpIcon className="mr-2 h-4 w-4" />
               {voted ? "Voted" : "Vote"}
             </Button>
-            <Button onClick={handleCancelVote} disabled={!voted}>
-              <ThickArrowDownIcon className="mr-2 h-4 w-4" />
-              {voted ? "Cancel Vote" : "Not Voted"}
-            </Button>
+
+        <Button onClick={handleCancelVote} disabled={!voted}>
+    <ThickArrowDownIcon className="mr-2 h-4 w-4" />
+    {voted ? "Cancel Vote" : "Not Voted"}
+  </Button>
+  <FeedbackArea postId={post.id} userId={session.user.id} />
+
           </div>
           <Card>
             <CardHeader>

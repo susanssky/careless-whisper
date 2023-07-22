@@ -89,6 +89,7 @@ model Post {
     transcription     Transcription?
     summary           String?
      votes            Vote[]
+     feedbacks         Feedback[] 
 }
 
 model Cohort {
@@ -134,4 +135,14 @@ model Vote{
      createdAt DateTime @default(now())
      @@unique([userId,postId])
 
+}
+
+model Feedback {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  userId    String   
+  text      String
+  createdAt DateTime @default(now())
+
+  post     Post     @relation(fields: [postId], references: [id])
 }
