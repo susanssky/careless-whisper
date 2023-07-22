@@ -90,6 +90,28 @@ const handleCancelVote = async () => {
   }
   }
 
+  const handleCancelVote = async () => {
+    if (voted) {
+      try {
+        const canceledPost = await cancelVoteTranscription(id, session.user.id)
+        if (canceledPost) {
+          setVoted(false)
+          localStorage.removeItem(`voted_${id}_${session.user.id}`)
+          alert("Your vote has been cancelled.")
+          setError("")
+          router.refresh()
+        } else {
+          setError("Failed to cancel vote. Please try again.")
+        }
+      } catch (error) {
+        console.error("Failed to cancel vote:", error)
+        setError("Failed to cancel vote. Please try again.")
+      }
+    } else {
+      alert("You have not voted yet.")
+    }
+  }
+
   const handleDelete = async (postId: number) => {
     const success = await deletePost(postId.toString())
     if (!success) {
@@ -247,11 +269,13 @@ const handleCancelVote = async () => {
               <ThickArrowUpIcon className="mr-2 h-4 w-4" />
               {voted ? "Voted" : "Vote"}
             </Button>
+
         <Button onClick={handleCancelVote} disabled={!voted}>
     <ThickArrowDownIcon className="mr-2 h-4 w-4" />
     {voted ? "Cancel Vote" : "Not Voted"}
   </Button>
   <FeedbackArea postId={post.id} userId={session.user.id} />
+
           </div>
           <Card>
             <CardHeader>
