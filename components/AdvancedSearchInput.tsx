@@ -1,7 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+
+
+
 
 const AdvancedSearchInput = () => {
   const [showInputs, setShowInputs] = useState(false)
@@ -12,7 +16,17 @@ const AdvancedSearchInput = () => {
   const [syllabusModule, setSyllabusModule] = useState("")
   const [duration, setDuration] = useState("")
 
+ 
+
   const router = useRouter()
+
+  const [keywordsSuggestions, setKeywordsSuggestions] = useState<string[]>([])
+  const [userSuggestions, setUserSuggestions] = useState<string[]>([])
+  const [leaderSuggestions, setLeaderSuggestions] = useState<string[]>([])
+  const [cohortSuggestions, setCohortSuggestions] = useState<string[]>([])
+  const [syllabusSuggestions, setSyllabusSuggestions] = useState<string[]>([])
+  const [durationSuggestions, setDurationSuggestions] = useState<string[]>([])
+  
 
   const onSearch = (event: React.FormEvent) => {
     event.preventDefault()
@@ -30,92 +44,177 @@ const AdvancedSearchInput = () => {
     router.push(`/advancedSearch?${encodedSearchParams}`)
   }
 
-  const toggleInputs = () => {
-    setShowInputs(!showInputs)
-  }
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault()
-      onSearch(event as React.FormEvent)
+    if (name === "cohortName" || name === "syllabusName") {
+      setCohort(value)
+    } else {
+      switch (name) {
+        case "keywords":
+          setKeywords(value)
+          break
+        case "user":
+          setUser(value)
+          break
+        case "leader":
+          setLeader(value)
+          break
+        case "syllabusModule":
+          setSyllabusModule(value)
+          break
+        case "duration":
+          setDuration(value)
+          break
+        default:
+          break
+      }
     }
   }
 
   return (
-    <>
-      {" "}
-      {!showInputs && (
-        <button
-          onClick={toggleInputs}
-          className="px-5 py-1 w-1/7 sm:px-5 sm:py-3 flex-1 text-zinc-200 bg-zinc-800 focus:bg-black rounded-full focus:outline-none focus:ring-[1px] focus:ring-green-700 placeholder:text-zinc-400 ml-5"
+    <div className="relative">
+      <button
+        onClick={() => setShowInputs(!showInputs)}
+        className="ml-5 px-6 py-3 text-white bg-red-500 rounded-full focus:outline-none focus:ring focus:ring-red-200 hover:bg-red-600 transition-all duration-200"
+      >
+        Advanced Search
+      </button>
+
+      {showInputs && (
+        <form
+          onSubmit={onSearch}
+          className="p-8 mt-4 bg-white rounded-lg shadow-lg absolute top-12 inset-x-0"
         >
-          Advanced Search
-        </button>
-      )}
-      <form onSubmit={onSearch} className="flex justify-center w-1/3 ml-5 my-5">
-        {showInputs && (
-          <>
+          <div className="space-y-6">
+         
+            <input
+              value={cohort}
+              onClick={() => setCohortSuggestions(cohortSuggestions)}
+              onChange={handleInputChange}
+              name="cohortName"
+              className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
+              placeholder="Cohort"
+              list="cohortSuggestions"
+            />
+
+{/*           
             <input
               value={keywords}
-              onChange={(event) => setKeywords(event.target.value)}
-              className="input-field"
+              onClick={() =>
+                setKeywordsSuggestions(keywordsSuggestions
+                )
+              }
+              onChange={handleInputChange}
+              name="keywords"
+              className="input-field w-full px-4 py-2 rounded-md focus:outline-none focus:border-red-500 focus:ring-red-500"
               placeholder="Keywords"
-              onKeyPress={handleKeyPress}
-            />
+              list="keywordsSuggestions"
+            /> */}
 
             <input
               value={user}
-              onChange={(event) => setUser(event.target.value)}
-              className="input-field"
+              onClick={() =>
+                setUserSuggestions(userSuggestions
+                )
+              }
+              onChange={handleInputChange}
+              name="user"
+              className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
               placeholder="User"
-              onKeyPress={handleKeyPress}
+              list="userSuggestions"
             />
 
             <input
               value={leader}
-              onChange={(event) => setLeader(event.target.value)}
-              className="input-field"
+              onClick={() =>
+                setLeaderSuggestions(leaderSuggestions
+                )
+              }
+              onChange={handleInputChange}
+              name="leader"
+              className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
               placeholder="Leader"
-              onKeyPress={handleKeyPress}
-            />
-
-            <input
-              value={cohort}
-              onChange={(event) => setCohort(event.target.value)}
-              className="input-field"
-              placeholder="Cohort"
-              onKeyPress={handleKeyPress}
+              list="leaderSuggestions"
             />
 
             <input
               value={syllabusModule}
-              onChange={(event) => setSyllabusModule(event.target.value)}
-              className="input-field"
+              onClick={() =>
+                setSyllabusSuggestions(syllabusSuggestions
+                )
+              }
+              onChange={handleInputChange}
+              name="syllabusModule"
+              className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
               placeholder="Syllabus"
-              onKeyPress={handleKeyPress}
+              list="syllabusSuggestions"
             />
 
-            <input
+            {/* <input
               value={duration}
-              onChange={(event) => setDuration(event.target.value)}
-              className="input-field"
+              onClick={() =>
+                setDurationSuggestions(durationSuggestions
+                )
+              }
+              onChange={handleInputChange}
+              name="duration"
+              className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
               placeholder="Duration"
-              onKeyPress={handleKeyPress}
-            />
-          </>
-        )}
+              list="durationSuggestions"
+            /> */}
 
-        <style jsx>{`
-          .input-field {
-            width: 100%;
-            padding: 8px;
-            margin-top: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-          }
-        `}</style>
-      </form>
-    </>
+            <div className="flex justify-end space-x-4">
+              <button
+                type="submit"
+                className="px-8 py-3 text-white bg-red-500 rounded-full focus:outline-none focus:ring focus:ring-red-200 hover:bg-red-600 transition-all duration-200"
+              >
+                Search
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowInputs(false)}
+                className="px-8 py-3 text-white bg-red-500 rounded-full focus:outline-none focus:ring focus:ring-red-200 hover:bg-red-600 transition-all duration-200"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+          <datalist id="keywordsSuggestions">
+            {keywordsSuggestions.map((suggestion, index) => (
+              <option key={index} value={suggestion} />
+            ))}
+          </datalist>
+          <datalist id="userSuggestions">
+            {userSuggestions.map((suggestion, index) => (
+              <option key={index} value={suggestion} />
+            ))}
+          </datalist>
+          <datalist id="leaderSuggestions">
+            {leaderSuggestions.map((suggestion, index) => (
+              <option key={index} value={suggestion} />
+            ))}
+          </datalist>
+          <datalist id="cohortSuggestions">
+            {cohortSuggestions.map((suggestion, index) => (
+              <option key={index} value={suggestion} />
+            ))}
+          </datalist>
+          <datalist id="syllabusSuggestions">
+            {syllabusSuggestions.map((suggestion, index) => (
+              <option key={index} value={suggestion} />
+            ))}
+          </datalist>
+          <datalist id="durationSuggestions">
+            {durationSuggestions.map((suggestion, index) => (
+              <option key={index} value={suggestion} />
+            ))}
+          </datalist>
+        </form>
+      )}
+    </div>
   )
 }
 

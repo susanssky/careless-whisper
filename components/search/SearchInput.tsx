@@ -1,53 +1,104 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-
-
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 
 
 const SearchInput = () => {
-  const search = useSearchParams()
-  const [searchQuery, setSearchQuery] = useState<string | null>(
-    search ? search.get("q") : ""
-  )
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [searchHistory, setSearchHistory] = useState<string[]>([])
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([])
+  const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false)
+
+  useEffect(() => {
+    const previousSearches = JSON.parse(
+      localStorage.getItem("searchHistory") || "[]"
+    )
+    setSearchHistory(previousSearches)
+    setSearchSuggestions(getUniqueSuggestions(previousSearches))
+  }, [])
 
   const onSearch = (event: React.FormEvent) => {
     event.preventDefault()
+    if (searchQuery && searchQuery.length >= 3) {
+      const encodedSearchQuery = encodeURI(searchQuery)
+      router.push(`/search?q=${encodedSearchQuery}`)
 
-    if (typeof searchQuery !== "string") {
-      console.log("Invalid search query")
-      return
+      const updatedSearchHistory = [searchQuery, ...searchHistory].slice(0, 5)
+      localStorage.setItem(
+        "searchHistory",
+        JSON.stringify(updatedSearchHistory)
+      )
+      setShowErrorMessage(false)
+    } else {
+      setShowErrorMessage(true)
     }
-
-    if (!searchQuery || searchQuery.length < 3) {
-      setErrorMessage("Search text should be at least 3 characters long")
-      return
-    }
-
-    const encodedSearchQuery = encodeURI(searchQuery)
-    router.push(`/search?q=${encodedSearchQuery}`)
   }
 
   const handleSearchQueryChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSearchQuery(event.target.value)
-    setErrorMessage(null)
+    const query = event.target.value
+    setSearchQuery(query)
+    setSearchSuggestions(getMatchingSuggestions(query))
+  }
+
+  const getUniqueSuggestions = (searchHistory: string[]): string[] => {
+    const suggestionCount: { [key: string]: number } = {}
+    const uniqueSuggestions: string[] = []
+
+    searchHistory.forEach((search) => {
+      suggestionCount[search] = (suggestionCount[search] || 0) + 1
+    })
+
+    const sortedSuggestions = Object.keys(suggestionCount).sort(
+      (a, b) => suggestionCount[b] - suggestionCount[a]
+    )
+    sortedSuggestions.forEach((query) => {
+      if (!uniqueSuggestions.includes(query)) {
+        uniqueSuggestions.push(query)
+      }
+    })
+
+    return uniqueSuggestions.slice(0, 5)
+  }
+
+  const getMatchingSuggestions = (query: string): string[] => {
+    const matchingSuggestions = searchHistory.filter(
+      (search) => search.includes(query) && search !== query
+    )
+    return matchingSuggestions.slice(0, 5)
   }
 
   return (
-    <form onSubmit={onSearch} className="flex justify-center w-1/3 ml-5 my-5">
-      <input
-        value={searchQuery || ""}
-        onChange={handleSearchQueryChange}
-        className="px-5 py-1 w-2/3 sm:px-5 sm:py-3 flex-1 text-zinc-200 bg-zinc-800 focus:bg-black rounded-full focus:outline-none focus:ring-[1px] focus:ring-green-700 placeholder:text-zinc-400"
-        placeholder="Search the text here..."
-      />
-      {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+    <form onSubmit={onSearch} className="w-full max-w-md mx-auto">
+      <div className="flex items-center border border-red-600 rounded-full shadow-md">
+        <input
+          value={searchQuery}
+          onChange={handleSearchQueryChange}
+          className="w-full px-4 py-2 rounded-full focus:outline-none focus:ring focus:ring-red-400 text-zinc-700 placeholder:text-z"
+          placeholder="Search the text here..."
+          list="searchSuggestions"
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 focus:outline-none focus:bg-red-700"
+        >
+          Search
+        </button>
+      </div>
+      {showErrorMessage && (
+        <p className="text-red-500 mt-2 text-sm">
+          Search text should be at least 3 characters long
+        </p>
+      )}
+      <datalist id="searchSuggestions">
+        {searchSuggestions.map((suggestion, index) => (
+          <option key={index} value={suggestion} />
+        ))}
+      </datalist>
     </form>
   )
 }
