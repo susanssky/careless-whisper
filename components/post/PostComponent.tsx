@@ -64,7 +64,7 @@ const handleVote = async () => {
     alert("Thank you for voting!")
     setError("")
     router.refresh()
-  } catch (error) {
+  } catch (error:any) {
     console.error("Failed to vote:", error)
     setError(error.message)
   }
