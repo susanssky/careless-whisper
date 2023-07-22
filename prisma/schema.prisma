@@ -135,4 +135,3 @@ model Vote{
      @@unique([userId,postId])
 
 }
-
