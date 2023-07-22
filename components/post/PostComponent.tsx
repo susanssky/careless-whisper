@@ -3,11 +3,14 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ThickArrowUpIcon } from "@radix-ui/react-icons"
+import { ThickArrowDownIcon, ThickArrowUpIcon } from "@radix-ui/react-icons"
 
 import { deletePost } from "@/lib/deletePost"
 import { updatePost } from "@/lib/updatePost"
-import { voteTranscription } from "@/lib/voteTranscription"
+import {
+  cancelVoteTranscription,
+  voteTranscription,
+} from "@/lib/voteTranscription"
 import {
   Accordion,
   AccordionContent,
@@ -81,6 +84,28 @@ export default function PostComponent({ post, session }: PostComponentProps) {
       }
     } else {
       alert("You have already voted. Thank you for your participation!")
+    }
+  }
+
+  const handleCancelVote = async () => {
+    if (voted) {
+      try {
+        const canceledPost = await cancelVoteTranscription(id, session.user.id)
+        if (canceledPost) {
+          setVoted(false)
+          localStorage.removeItem(`voted_${id}_${session.user.id}`)
+          alert("Your vote has been cancelled.")
+          setError("")
+          router.refresh()
+        } else {
+          setError("Failed to cancel vote. Please try again.")
+        }
+      } catch (error) {
+        console.error("Failed to cancel vote:", error)
+        setError("Failed to cancel vote. Please try again.")
+      }
+    } else {
+      alert("You have not voted yet.")
     }
   }
 
@@ -243,6 +268,10 @@ export default function PostComponent({ post, session }: PostComponentProps) {
             <Button onClick={handleVote} disabled={voted}>
               <ThickArrowUpIcon className="mr-2 h-4 w-4" />
               {voted ? "Voted" : "Vote"}
+            </Button>
+            <Button onClick={handleCancelVote} disabled={!voted}>
+              <ThickArrowDownIcon className="mr-2 h-4 w-4" />
+              {voted ? "Cancel Vote" : "Not Voted"}
             </Button>
           </div>
           <Card>
