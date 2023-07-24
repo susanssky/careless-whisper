@@ -19,7 +19,7 @@ export default function loginFailPage() {
       />
 
       <Button asChild>
-        <Link href="/">Back to login page</Link>
+        <Link href="/">Back to Home Page</Link>
       </Button>
     </div>
   )

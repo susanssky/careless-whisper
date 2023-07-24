@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
 
-import { getMostRecentTranscripts, Transcript } from "@/lib/dateTranscripts"
+import { getMostVotedTranscripts, Transcript } from "@/lib/mostVotedTranscripts"
 
-const MostRecentTranscripts = () => {
+const MostVotedTranscripts = () => {
   const [transcripts, setTranscripts] = useState<Transcript[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -13,11 +13,11 @@ const MostRecentTranscripts = () => {
   useEffect(() => {
     async function fetchTranscripts() {
       try {
-        const fetchedTranscripts = await getMostRecentTranscripts()
+        const fetchedTranscripts = await getMostVotedTranscripts()
         setTranscripts(fetchedTranscripts)
         setLoading(false)
       } catch (error) {
-        setError("Failed to fetch most recent transcripts")
+        setError("Failed to fetch most voted transcripts")
         setLoading(false)
       }
     }
@@ -25,17 +25,10 @@ const MostRecentTranscripts = () => {
     fetchTranscripts()
   }, [])
 
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>
-  }
   return (
     <div className="container mx-auto p-4">
       <div>
-        <h1 className="text-3xl font-bold mb-4">Most Recent</h1>
+        <h1 className="text-3xl font-bold mb-4">Most Voted</h1>
         <div className="grid gap-4 grid-cols-1 md:grid-cols-1">
           {transcripts?.map((transcript) => (
             <Link
@@ -48,7 +41,7 @@ const MostRecentTranscripts = () => {
               </h2>
 
               <p className="text-gray-600">
-                Created At: {new Date(transcript.createdAt).toLocaleString()}
+                Votes: {transcript?.votesNum.toString()}
               </p>
             </Link>
           ))}
@@ -58,4 +51,4 @@ const MostRecentTranscripts = () => {
   )
 }
 
-export default MostRecentTranscripts
+export default MostVotedTranscripts

@@ -5,23 +5,27 @@ import { prisma } from "@/lib/prisma"
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const postId = searchParams.get("postId")
+
+    const transcriptId = searchParams.get("transcriptId")
     const userId = searchParams.get("userId")
 
-    if (!postId || !userId) {
-      return new Response("Post ID or User ID is missing", { status: 400 })
+    if (!transcriptId || !userId) {
+      return new Response("Transcript ID or User ID is missing", {
+        status: 400,
+      })
     }
 
     const vote = await prisma.vote.create({
       data: {
-        postId: parseInt(postId),
+        transcriptId: parseInt(transcriptId),
+
         userId: userId,
       },
     })
 
-    const updatedPost = await prisma.post.update({
+    const updatedTranscript = await prisma.transcript.update({
       where: {
-        id: parseInt(postId),
+        id: parseInt(transcriptId),
       },
       data: {
         votesNum: {
@@ -30,9 +34,9 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(updatedPost)
+    return NextResponse.json(updatedTranscript)
   } catch (error: any) {
-    console.error("Error voting for post:", error)
+    console.error("Error voting for transcript:", error)
     return new Response(error.message, { status: 500 })
   }
 }

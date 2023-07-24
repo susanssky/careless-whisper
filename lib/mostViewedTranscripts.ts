@@ -1,16 +1,16 @@
 export interface Transcript {
   id: number
   syllabus: Syllabus
-  createdAt: Date
+  viewsNum: Number
 }
 
 export interface Syllabus {
   name: string
 }
 
-export async function getMostRecentTranscripts(): Promise<Transcript[] | null> {
+export async function getMostViewedTranscripts(): Promise<Transcript[] | null> {
   try {
-    const response = await fetch(`api/transcripts/most-recent`, {
+    const response = await fetch(`api/transcripts/most-viewed`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -19,14 +19,13 @@ export async function getMostRecentTranscripts(): Promise<Transcript[] | null> {
 
     if (response.ok) {
       const transcripts = await response.json()
-      console.log("API Response:", transcripts)
+      // console.log("API Response:", transcripts)
       return transcripts as Transcript[]
     } else {
-      throw new Error("Failed to fetch most recent transcripts")
+      throw new Error("Failed to fetch most viewed transcripts")
     }
   } catch (error) {
-    console.error("Failed to fetch most recent transcripts:", error)
-
+    console.error("Failed to fetch most viewed transcripts:", error)
     return null
   }
 }

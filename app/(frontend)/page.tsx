@@ -2,7 +2,7 @@ import Image from "next/image"
 import { redirect } from "next/navigation"
 
 import { UserServerSession } from "@/lib/helpers"
-import SignInButton from "@/components/homepage/SignInButton"
+import SignInButton from "@/components/Header/SignInButton"
 
 // export const revalidate = 1
 export default async function LoginPage() {

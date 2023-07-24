@@ -4,27 +4,27 @@ type createSentenceType = {
   endTime: string
   content: string
 }
-//submit the post from client
+//submit the tra from client
 type commonFields = {
   sessionName: string
   leaderName: string
   originalVideoLink?: string
-  transcription: createSentenceType[]
+  sentences: createSentenceType[]
   summary?: string
 }
 
-type createPostType = commonFields & {
+type createTranscriptType = commonFields & {
   cohortName: { open: boolean; value: string }
   syllabusName: { open: boolean; value: string }
 }
 
-type createPostFromClientType = commonFields & {
+type createTranscriptFromClientType = commonFields & {
   cohortName: string
   syllabusName: string
   user: { id: string }
 }
-//display the post
-type PostType = {
+//display the transcript
+type TranscriptType = {
   id: number
   originalVideoLink?: string
   sessionName: string
@@ -42,13 +42,12 @@ type PostType = {
   user: {
     name: string
   }
-  transcription: {
-    sentences: createSentenceType[]
-  }
+  sentences: createSentenceType[]
   summary: string
+  createdAt: string
 }
 type DashboardTableTrPropsType = {
-  post: PostType
+  transcript: TranscriptType
 }
 type SyllabusType = {
   id: number

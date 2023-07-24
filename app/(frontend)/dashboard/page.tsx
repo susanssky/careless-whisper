@@ -1,16 +1,16 @@
 import Image from "next/image"
 
-import { getAllPosts, UserServerSession } from "@/lib/helpers"
+import { getAllTranscripts, UserServerSession } from "@/lib/helpers"
 import AdvancedSearchInput from "@/components/AdvancedSearchInput"
-import DashboardTableTr from "@/components/dashboard/TableTr"
-import SearchInput from "@/components/search/SearchInput"
+import DashboardTableTr from "@/components/Dashboard/TableTr"
+import SearchInput from "@/components/Search/SearchInput"
 
 export const revalidate = 1
 
 export default async function Dashboard() {
-  const posts = await getAllPosts()
+  const transcripts = await getAllTranscripts()
   const session = await UserServerSession()
-  // console.log(posts)
+  // console.log(transcripts)
 
   // console.log(session?.user)
 
@@ -45,8 +45,8 @@ export default async function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {posts.map((post) => (
-              <DashboardTableTr post={post} />
+            {transcripts.map((transcript) => (
+              <DashboardTableTr transcript={transcript} />
             ))}
           </tbody>
         </table>

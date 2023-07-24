@@ -3,39 +3,41 @@
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 
-import { viewTranscription } from "@/lib/viewTranscription"
+import { viewTranscript } from "@/lib/viewTranscript"
 
-export default function DashboardTableTr({ post }: DashboardTableTrPropsType) {
+export default function DashboardTableTr({
+  transcript,
+}: DashboardTableTrPropsType) {
   const router = useRouter()
-  const [viewsNum, setViewsNum] = useState(post.viewsNum)
+  const [viewsNum, setViewsNum] = useState(transcript.viewsNum)
 
   const handleClick = async () => {
     try {
-      const updatedPost = await viewTranscription(post.id)
+      const updatedTranscript = await viewTranscript(transcript.id)
 
-      if (updatedPost !== null) {
-        setViewsNum(updatedPost?.viewsNum ?? 0)
+      if (updatedTranscript !== null) {
+        setViewsNum(updatedTranscript?.viewsNum ?? 0)
       }
 
       router.refresh()
-      router.push(`/dashboard/posts/${post.id}`)
+      router.push(`/dashboard/transcripts/${transcript.id}`)
     } catch (error) {
-      console.error("Error navigating to post:", error)
+      console.error("Error navigating to transcript:", error)
     }
   }
 
   return (
     <tr
-      key={post.id}
+      key={transcript.id}
       onClick={handleClick}
       className="cursor-pointer hover:bg-gray-50"
     >
-      <td className="py-2 px-4 border ">{post.cohort.name}</td>
-      <td className="py-2 px-4 border">{post.syllabus.name}</td>
-      <td className="py-2 px-4 border">{post.sessionName}</td>
-      <td className="py-2 px-4 border">{post.leaderName}</td>
-      <td className="py-2 px-4 border">{post.viewsNum}</td>
-      <td className="py-2 px-4 border">{post.votesNum}</td>
+      <td className="py-2 px-4 border ">{transcript.cohort.name}</td>
+      <td className="py-2 px-4 border">{transcript.syllabus.name}</td>
+      <td className="py-2 px-4 border">{transcript.sessionName}</td>
+      <td className="py-2 px-4 border">{transcript.leaderName}</td>
+      <td className="py-2 px-4 border">{transcript.viewsNum}</td>
+      <td className="py-2 px-4 border">{transcript.votesNum}</td>
     </tr>
   )
 }

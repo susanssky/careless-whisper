@@ -2,10 +2,10 @@ import Link from "next/link"
 
 import { siteConfig } from "@/config/site"
 import { UserServerSession } from "@/lib/helpers"
-import { MainNav } from "@/components/general/MainNav"
-import { ThemeToggle } from "@/components/general/ThemeToggle"
+import { ThemeToggle } from "@/components/Header/ThemeToggle"
+import { MainNav } from "@/components/Nav/MainNav"
 
-import SignOutButton from "./SignOutButton"
+import SignOutButton from "../Header/SignOutButton"
 
 export async function SiteHeader() {
   const session = await UserServerSession()

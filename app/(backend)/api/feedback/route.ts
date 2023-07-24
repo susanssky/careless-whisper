@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server"
 
 import { prisma } from "@/lib/prisma"
@@ -6,19 +5,22 @@ import { prisma } from "@/lib/prisma"
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const postId = searchParams.get("postId")
+    const transcriptId = searchParams.get("transcriptId")
     const userId = searchParams.get("userId")
-    const feedbackText = searchParams.get("feedbackText") 
+    const feedbackText = searchParams.get("feedbackText")
 
-    if (!postId || !userId || !feedbackText) {
-      return new Response("Post ID, User ID, or Feedback Text is missing", {
-        status: 400,
-      })
+    if (!transcriptId || !userId || !feedbackText) {
+      return new Response(
+        "Transcript ID, User ID, or Feedback Text is missing",
+        {
+          status: 400,
+        }
+      )
     }
 
     const feedback = await prisma.feedback.create({
       data: {
-        postId: parseInt(postId),
+        transcriptId: parseInt(transcriptId),
         userId,
         text: feedbackText,
       },

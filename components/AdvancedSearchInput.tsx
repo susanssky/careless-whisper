@@ -1,11 +1,7 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-
-
-
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 const AdvancedSearchInput = () => {
   const [showInputs, setShowInputs] = useState(false)
@@ -16,8 +12,6 @@ const AdvancedSearchInput = () => {
   const [syllabusModule, setSyllabusModule] = useState("")
   const [duration, setDuration] = useState("")
 
- 
-
   const router = useRouter()
 
   const [keywordsSuggestions, setKeywordsSuggestions] = useState<string[]>([])
@@ -26,7 +20,6 @@ const AdvancedSearchInput = () => {
   const [cohortSuggestions, setCohortSuggestions] = useState<string[]>([])
   const [syllabusSuggestions, setSyllabusSuggestions] = useState<string[]>([])
   const [durationSuggestions, setDurationSuggestions] = useState<string[]>([])
-  
 
   const onSearch = (event: React.FormEvent) => {
     event.preventDefault()
@@ -41,7 +34,8 @@ const AdvancedSearchInput = () => {
     }
 
     const encodedSearchParams = new URLSearchParams(searchParams).toString()
-    router.push(`/advancedSearch?${encodedSearchParams}`)
+
+    router.push(`/dashboard/advanced-search?${encodedSearchParams}`)
   }
 
   const handleInputChange = (
@@ -89,7 +83,6 @@ const AdvancedSearchInput = () => {
           className="p-8 mt-4 bg-white rounded-lg shadow-lg absolute top-12 inset-x-0"
         >
           <div className="space-y-6">
-         
             <input
               value={cohort}
               onClick={() => setCohortSuggestions(cohortSuggestions)}
@@ -100,7 +93,7 @@ const AdvancedSearchInput = () => {
               list="cohortSuggestions"
             />
 
-{/*           
+            {/*           
             <input
               value={keywords}
               onClick={() =>
@@ -116,10 +109,7 @@ const AdvancedSearchInput = () => {
 
             <input
               value={user}
-              onClick={() =>
-                setUserSuggestions(userSuggestions
-                )
-              }
+              onClick={() => setUserSuggestions(userSuggestions)}
               onChange={handleInputChange}
               name="user"
               className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
@@ -129,10 +119,7 @@ const AdvancedSearchInput = () => {
 
             <input
               value={leader}
-              onClick={() =>
-                setLeaderSuggestions(leaderSuggestions
-                )
-              }
+              onClick={() => setLeaderSuggestions(leaderSuggestions)}
               onChange={handleInputChange}
               name="leader"
               className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
@@ -142,10 +129,7 @@ const AdvancedSearchInput = () => {
 
             <input
               value={syllabusModule}
-              onClick={() =>
-                setSyllabusSuggestions(syllabusSuggestions
-                )
-              }
+              onClick={() => setSyllabusSuggestions(syllabusSuggestions)}
               onChange={handleInputChange}
               name="syllabusModule"
               className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"

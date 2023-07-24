@@ -6,11 +6,10 @@ import { Metadata } from "next"
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
+import Loading from "@/components/Dashboard/Loading"
 import { SiteHeader } from "@/components/general/SiteHeader"
-import { TailwindIndicator } from "@/components/general/TailwindIndicator"
-import { ThemeProvider } from "@/components/general/ThemeProvider"
-
-import Loading from "../../components/dashboard/Loading"
+import { ThemeProvider } from "@/components/Header/ThemeProvider"
+import { TailwindIndicator } from "@/components/TailwindIndicator"
 
 export const metadata: Metadata = {
   title: {

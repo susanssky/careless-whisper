@@ -10,9 +10,14 @@ export default withAuth(
     // console.log(request.nextauth.token);
 
     if (
-      request.nextUrl.pathname.startsWith("/dashboard/create-post") ||
-      (request.nextUrl.pathname.startsWith("/dashboard/tutorial") &&
-        request.nextauth.token?.role !== "Mentor")
+      request.nextUrl.pathname.startsWith("/dashboard/create-transcript") &&
+      request.nextauth.token?.role !== "Mentor"
+    ) {
+      return NextResponse.redirect(new URL("/dashboard", request.url))
+    }
+    if (
+      request.nextUrl.pathname.startsWith("/dashboard/turorial") &&
+      request.nextauth.token?.role !== "Mentor"
     ) {
       return NextResponse.redirect(new URL("/dashboard", request.url))
     }

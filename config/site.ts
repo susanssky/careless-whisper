@@ -16,7 +16,7 @@ export const siteConfig = {
     },
     {
       title: "Create the transcript",
-      href: "/dashboard/create-post",
+      href: "/dashboard/create-transcript",
       isMentor: true,
     },
     {
