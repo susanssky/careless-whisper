@@ -1,12 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server"
 
-
-
-import { prisma } from "@/lib/prisma";
-
-
-
-
+import { prisma } from "@/lib/prisma"
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -18,27 +12,21 @@ export async function GET(request: Request) {
       )
     }
 
-    const posts = await prisma.post.findMany({
+    const transcripts = await prisma.transcript.findMany({
       where: {
-        transcription: {
-          sentences: {
-            some: {
-              content: {
-                contains: query,
-                mode: "insensitive",
-              },
+        sentences: {
+          some: {
+            content: {
+              contains: query,
+              mode: "insensitive",
             },
           },
         },
       },
       include: {
-        transcription: {
-          include: {
-            sentences: true,
-          },
-        },
-        cohort: true, 
-        syllabus: true, 
+        sentences: true,
+        cohort: true,
+        syllabus: true,
       },
     })
 
@@ -48,7 +36,7 @@ export async function GET(request: Request) {
       },
     })
 
-    return NextResponse.json(posts)
+    return NextResponse.json(transcripts)
   } catch (error: any) {
     console.error(error)
     return new Response(error.message, { status: 500 })

@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { ZoomInIcon } from "@radix-ui/react-icons"
 
-
-
-
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 const AdvancedSearchInput = () => {
   const [showInputs, setShowInputs] = useState(false)
@@ -16,8 +16,6 @@ const AdvancedSearchInput = () => {
   const [syllabusModule, setSyllabusModule] = useState("")
   const [duration, setDuration] = useState("")
 
- 
-
   const router = useRouter()
 
   const [keywordsSuggestions, setKeywordsSuggestions] = useState<string[]>([])
@@ -26,7 +24,6 @@ const AdvancedSearchInput = () => {
   const [cohortSuggestions, setCohortSuggestions] = useState<string[]>([])
   const [syllabusSuggestions, setSyllabusSuggestions] = useState<string[]>([])
   const [durationSuggestions, setDurationSuggestions] = useState<string[]>([])
-  
 
   const onSearch = (event: React.FormEvent) => {
     event.preventDefault()
@@ -41,7 +38,7 @@ const AdvancedSearchInput = () => {
     }
 
     const encodedSearchParams = new URLSearchParams(searchParams).toString()
-    router.push(`/advancedSearch?${encodedSearchParams}`)
+    router.push(`/dashboard/advanced-search?${encodedSearchParams}`)
   }
 
   const handleInputChange = (
@@ -73,34 +70,39 @@ const AdvancedSearchInput = () => {
       }
     }
   }
+  const buttonStyle: string =
+    "flex gap-2 h-7 rounded dark:text-white dark:bg-[#8c8c8c] hover:bg-red-500 hover:text-black dark:hover:bg-red-500 dark:hover:text-black"
 
   return (
-    <div className="relative">
-      <button
+    <div>
+      <Button
+        className={`w-full flex gap-1 justify-start px-2 py-0 ${
+          showInputs
+            ? "text-black hover:text-white bg-red-500 hover:bg-red-500 dark:bg-red-500"
+            : "dark:bg-[#1f1f1f]"
+        }`}
         onClick={() => setShowInputs(!showInputs)}
-        className="ml-5 px-6 py-3 text-white bg-red-500 rounded-full focus:outline-none focus:ring focus:ring-red-200 hover:bg-red-600 transition-all duration-200"
       >
-        Advanced Search
-      </button>
+        <ZoomInIcon className={`${showInputs ? "" : "dark:text-red-500"}`} />
+        <span className={`${showInputs ? "" : "dark:text-[#7f8ea3]"}`}>
+          Advanced Search
+        </span>
+      </Button>
 
       {showInputs && (
-        <form
-          onSubmit={onSearch}
-          className="p-8 mt-4 bg-white rounded-lg shadow-lg absolute top-12 inset-x-0"
-        >
-          <div className="space-y-6">
-         
-            <input
+        <form onSubmit={onSearch} className="flex flex-col gap-2 mt-2">
+          <>
+            <Input
               value={cohort}
               onClick={() => setCohortSuggestions(cohortSuggestions)}
               onChange={handleInputChange}
               name="cohortName"
-              className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
+              className="input-field py-2 focus:border-red-500 focus:ring-red-500"
               placeholder="Cohort"
               list="cohortSuggestions"
             />
 
-{/*           
+            {/*           
             <input
               value={keywords}
               onClick={() =>
@@ -114,41 +116,32 @@ const AdvancedSearchInput = () => {
               list="keywordsSuggestions"
             /> */}
 
-            <input
+            <Input
               value={user}
-              onClick={() =>
-                setUserSuggestions(userSuggestions
-                )
-              }
+              onClick={() => setUserSuggestions(userSuggestions)}
               onChange={handleInputChange}
               name="user"
-              className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
+              className=""
               placeholder="User"
               list="userSuggestions"
             />
 
-            <input
+            <Input
               value={leader}
-              onClick={() =>
-                setLeaderSuggestions(leaderSuggestions
-                )
-              }
+              onClick={() => setLeaderSuggestions(leaderSuggestions)}
               onChange={handleInputChange}
               name="leader"
-              className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
+              className="input-field py-2 focus:border-red-500 focus:ring-red-500"
               placeholder="Leader"
               list="leaderSuggestions"
             />
 
-            <input
+            <Input
               value={syllabusModule}
-              onClick={() =>
-                setSyllabusSuggestions(syllabusSuggestions
-                )
-              }
+              onClick={() => setSyllabusSuggestions(syllabusSuggestions)}
               onChange={handleInputChange}
               name="syllabusModule"
-              className="input-field w-full px-4 py-2 rounded-md focus:border-red-500 focus:ring-red-500"
+              className="input-field py-2 focus:border-red-500 focus:ring-red-500"
               placeholder="Syllabus"
               list="syllabusSuggestions"
             />
@@ -166,23 +159,20 @@ const AdvancedSearchInput = () => {
               list="durationSuggestions"
             /> */}
 
-            <div className="flex justify-end space-x-4">
-              <button
-                type="submit"
-                className="px-8 py-3 text-white bg-red-500 rounded-full focus:outline-none focus:ring focus:ring-red-200 hover:bg-red-600 transition-all duration-200"
-              >
+            <div className="flex justify-between">
+              <Button type="submit" className={buttonStyle}>
                 Search
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setShowInputs(false)}
-                className="px-8 py-3 text-white bg-red-500 rounded-full focus:outline-none focus:ring focus:ring-red-200 hover:bg-red-600 transition-all duration-200"
+                className={buttonStyle}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
-          </div>
-          <datalist id="keywordsSuggestions">
+          </>
+          {/* <datalist id="keywordsSuggestions">
             {keywordsSuggestions.map((suggestion, index) => (
               <option key={index} value={suggestion} />
             ))}
@@ -211,7 +201,7 @@ const AdvancedSearchInput = () => {
             {durationSuggestions.map((suggestion, index) => (
               <option key={index} value={suggestion} />
             ))}
-          </datalist>
+          </datalist> */}
         </form>
       )}
     </div>
