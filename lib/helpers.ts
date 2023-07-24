@@ -8,7 +8,6 @@ export async function getAllTranscripts() {
   })
   // console.log(res)
   if (!res.ok) throw new Error("failed to fetch data")
-
   const transcriptsData: TranscriptType[] = await res.json()
   // console.log(transcriptsData)
   const transcripts = transcriptsData.sort((a, b) => a.id - b.id)
@@ -25,10 +24,26 @@ export async function getTranscript(transcriptId: string) {
   const transcript: TranscriptType = await res.json()
   return transcript
 }
+export async function getAllTranscriptsByCreatedAt() {
+  const transcripts = await getAllTranscripts()
+  return transcripts.sort(
+    (a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
+  )
+}
+
+export async function getAllTranscriptsByMostViews() {
+  const transcripts = await getAllTranscripts()
+  return transcripts.sort((a, b) => b.viewsNum - a.viewsNum)
+}
+export async function getAllTranscriptsByMostVotes() {
+  const transcripts = await getAllTranscripts()
+  return transcripts.sort((a, b) => b.votesNum - a.votesNum)
+}
 
 export async function UserServerSession() {
   return await getServerSession(authOptions)
 }
+// create-post
 export async function getAllSyllabuses() {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/syllabuses`)
   // console.log(res)

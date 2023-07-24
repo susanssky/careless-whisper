@@ -7,8 +7,8 @@ export async function GET(request: NextRequest) {
   try {
     const transcripts = await prisma.transcript.findMany({
       include: {
+        cohort: true,
         sentences: true,
-
         syllabus: true,
       },
       orderBy: {
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     }
 
     revalidatePath("/")
-
+    // console.log(transcripts)
     return NextResponse.json(transcripts)
   } catch (error) {
     console.error("Error fetching transcripts:", error)

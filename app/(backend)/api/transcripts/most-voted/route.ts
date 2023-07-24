@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
   try {
     const transcripts = await prisma.transcript.findMany({
       include: {
+        cohort: true,
         sentences: true,
         syllabus: true,
       },

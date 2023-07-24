@@ -1,14 +1,35 @@
 "use client"
 
-import { GitHubLogoIcon } from "@radix-ui/react-icons"
 import { signOut } from "next-auth/react"
 
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger,
+} from "@/components/ui/menubar"
 
-export default function SignOutButton() {
+export default function SignOutButton({ session }: { session: any }) {
   return (
-    <Button onClick={() => signOut({ callbackUrl: "/" })}>
-      <GitHubLogoIcon className="mr-2 h-4 w-4" /> Sign Out
-    </Button>
+    <Menubar className="border-none cursor-pointer bg-transparent">
+      <MenubarMenu>
+        <MenubarTrigger>
+          <Avatar className="h-8 w-8 cursor-pointer">
+            <AvatarImage src={session.user.image} className="cursor-pointer" />
+            <AvatarFallback>{session.user.name}</AvatarFallback>
+          </Avatar>
+        </MenubarTrigger>
+        <MenubarContent className="min-w-2 shadow-none">
+          <MenubarItem
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="cursor-pointe text-black dark:text-white"
+          >
+            Logout
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
   )
 }

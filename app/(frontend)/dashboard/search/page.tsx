@@ -64,12 +64,14 @@ const SearchPage = () => {
   }
 
   return (
-    <div className="mt-8 p-4">
-      <span className="text-2xl font-semibold">
+    <section className="grow p-4">
+      <span className="font-lora font-semibold text-2xl">
         Showing results for: <span className="text-red-500">{searchQuery}</span>
       </span>
+
+      <hr className="dark:border dark:border-solid dark:border-zinc-800" />
       <SearchTranscriptTable transcripts={data} />
-    </div>
+    </section>
   )
 }
 

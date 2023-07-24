@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons"
 
-
+import { Input } from "@/components/ui/input"
 
 const SearchInput = () => {
   const router = useRouter()
@@ -24,7 +25,7 @@ const SearchInput = () => {
     event.preventDefault()
     if (searchQuery && searchQuery.length >= 3) {
       const encodedSearchQuery = encodeURI(searchQuery)
-      router.push(`/search?q=${encodedSearchQuery}`)
+      router.push(`/dashboard/search?q=${encodedSearchQuery}`)
 
       const updatedSearchHistory = [searchQuery, ...searchHistory].slice(0, 5)
       localStorage.setItem(
@@ -73,32 +74,26 @@ const SearchInput = () => {
   }
 
   return (
-    <form onSubmit={onSearch} className="w-full max-w-md mx-auto">
-      <div className="flex items-center border border-red-600 rounded-full shadow-md">
-        <input
-          value={searchQuery}
+    <form onSubmit={onSearch} className="flex flex-col">
+      <div className="flex items-center gap-1 rounded-md dark:bg-[#1f1f1f]  bg-white pl-2 border-none">
+        <MagnifyingGlassIcon className="dark:text-red-500" />
+        <Input
+          value={searchQuery || ""}
           onChange={handleSearchQueryChange}
-          className="w-full px-4 py-2 rounded-full focus:outline-none focus:ring focus:ring-red-400 text-zinc-700 placeholder:text-z"
-          placeholder="Search the text here..."
-          list="searchSuggestions"
+          placeholder={"Search the transcripts..."}
+          className="w-max p-0 border-none focus-visible:none focus:border-teal focus:outline-none focus:ring-0 focus:border-white"
         />
-        <button
-          type="submit"
-          className="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 focus:outline-none focus:bg-red-700"
-        >
-          Search
-        </button>
       </div>
       {showErrorMessage && (
-        <p className="text-red-500 mt-2 text-sm">
+        <p className="max-w-[200px] pl-2 text-sm text-red-700 dark:text-white">
           Search text should be at least 3 characters long
         </p>
       )}
-      <datalist id="searchSuggestions">
+      {/* <datalist id="searchSuggestions">
         {searchSuggestions.map((suggestion, index) => (
           <option key={index} value={suggestion} />
         ))}
-      </datalist>
+      </datalist> */}
     </form>
   )
 }

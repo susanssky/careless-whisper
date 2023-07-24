@@ -11,18 +11,18 @@ const MostRecentTranscripts = () => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    async function fetchTranscripts() {
+    async function fetchTranscriptions() {
       try {
         const fetchedTranscripts = await getMostRecentTranscripts()
         setTranscripts(fetchedTranscripts)
         setLoading(false)
       } catch (error) {
-        setError("Failed to fetch most recent transcripts")
+        setError("Failed to fetch most recent transcriptions")
         setLoading(false)
       }
     }
 
-    fetchTranscripts()
+    fetchTranscriptions()
   }, [])
 
   if (loading) {

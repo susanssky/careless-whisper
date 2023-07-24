@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma"
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-
     const transcriptId = searchParams.get("transcriptId")
     const userId = searchParams.get("userId")
 
@@ -36,7 +35,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(updatedTranscript)
   } catch (error: any) {
     console.error("Error cancelling vote for transcript:", error)
-
     return new Response(error.message, { status: 500 })
   }
 }

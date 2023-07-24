@@ -26,7 +26,6 @@ export async function getMostRecentTranscripts(): Promise<Transcript[] | null> {
     }
   } catch (error) {
     console.error("Failed to fetch most recent transcripts:", error)
-
     return null
   }
 }

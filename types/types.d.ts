@@ -46,7 +46,7 @@ type TranscriptType = {
   summary: string
   createdAt: string
 }
-type DashboardTableTrPropsType = {
+type DashboardTableBodyTrPropsType = {
   transcript: TranscriptType
 }
 type SyllabusType = {

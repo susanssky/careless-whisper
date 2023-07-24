@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma"
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-
     const transcriptId = searchParams.get("transcriptId")
     const userId = searchParams.get("userId")
 
@@ -18,7 +17,6 @@ export async function POST(request: NextRequest) {
     const vote = await prisma.vote.create({
       data: {
         transcriptId: parseInt(transcriptId),
-
         userId: userId,
       },
     })

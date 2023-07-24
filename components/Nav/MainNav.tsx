@@ -22,7 +22,7 @@ export async function MainNav({ items }: MainNavProps) {
 
   return (
     <div className="flex gap-6 md:gap-10">
-      <Link
+      {/* <Link
         href={session ? "/dashboard" : "/"}
         className="flex items-center space-x-2"
       >
@@ -47,7 +47,7 @@ export async function MainNav({ items }: MainNavProps) {
               )
           )}
         </nav>
-      ) : null}
+      ) : null} */}
     </div>
   )
 }

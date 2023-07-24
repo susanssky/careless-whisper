@@ -4,12 +4,14 @@ import { Suspense } from "react"
 import { Metadata } from "next"
 
 import { siteConfig } from "@/config/site"
-import { fontSans } from "@/lib/fonts"
+import { inter, lora } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
-import Loading from "@/components/Dashboard/Loading"
-import { SiteHeader } from "@/components/general/SiteHeader"
+import Footer from "@/components/Footer/Footer"
+import Header from "@/components/Header/Header"
 import { ThemeProvider } from "@/components/Header/ThemeProvider"
 import { TailwindIndicator } from "@/components/TailwindIndicator"
+
+import Loading from "../../components/Dashboard/Loading"
 
 export const metadata: Metadata = {
   title: {
@@ -31,26 +33,29 @@ export const metadata: Metadata = {
 interface RootLayoutProps {
   children: React.ReactNode
 }
+
 export const dynamic = "force-dynamic"
+
 export const revalidate = 0
+
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.className} ${lora.variable}`}
+    >
       <head />
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          "bg-background antialiased flex flex-col min-h-screen" // max-h-screen relative
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="relative flex min-h-screen flex-col">
-            <SiteHeader />
-            <Suspense fallback={<Loading />}>
-              <div className="flex-1">{children}</div>
-            </Suspense>
-          </div>
-          <TailwindIndicator />
+          <Header />
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+          <Footer />
+          {/* <TailwindIndicator /> */}
         </ThemeProvider>
       </body>
     </html>

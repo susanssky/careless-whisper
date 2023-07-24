@@ -5,6 +5,8 @@ import React, { useState } from "react"
 import { submitFeedback } from "@/lib/feedbackTranscript"
 import { Button } from "@/components/ui/button"
 
+import { Textarea } from "../ui/textarea"
+
 type FeedbackAreaProps = {
   transcriptId: number
   userId: string
@@ -48,24 +50,33 @@ const FeedbackArea = ({ transcriptId, userId }: FeedbackAreaProps) => {
       setSubmittedFeedback("Failed to submit feedback. Please try again.")
     }
   }
+  const buttonStyle: string =
+    "flex gap-2 h-7 rounded dark:text-white dark:bg-[#8c8c8c] hover:bg-red-500 hover:text-black dark:hover:bg-red-500 dark:hover:text-black"
 
   return (
     <div>
-      <Button onClick={toggleFeedbackArea}>Feedback</Button>
+      <Button onClick={toggleFeedbackArea} className={buttonStyle}>
+        Feedback
+      </Button>
       {showFeedback && (
         <div className="fixed inset-0 flex justify-center items-center z-50 bg-black opacity suffix">
-          <div className="bg-white p-8 rounded-lg shadow-lg">
-            <textarea
-              className="w-full h-48 p-4 border border-gray-300 rounded-lg mb-4 resize-none"
+          <div className="bg-[#c8c8c8] dark:bg-[#27272a] p-8 rounded-lg shadow-lg w-96">
+            <Textarea
+              className="w-full h-48 p-4 border border-gray-300 bg-white dark:bg-[#1f1f1f] rounded-lg mb-4 resize-none"
               placeholder="Enter your feedback here..."
               value={feedbackText}
               onChange={handleFeedbackChange}
             />
             <div className="flex justify-end">
-              <Button className="mr-2" onClick={toggleFeedbackArea}>
+              <Button className={buttonStyle} onClick={toggleFeedbackArea}>
                 Cancel
               </Button>
-              <Button onClick={handleSubmitFeedback}>Submit</Button>
+              <Button
+                className="flex gap-2 h-7 rounded dark:text-white dark:bg-[#8c8c8c] hover:bg-red-500 hover:text-black dark:hover:bg-red-500 dark:hover:text-black ml-1"
+                onClick={handleSubmitFeedback}
+              >
+                Submit
+              </Button>
             </div>
           </div>
         </div>
@@ -73,7 +84,7 @@ const FeedbackArea = ({ transcriptId, userId }: FeedbackAreaProps) => {
 
       {submittedFeedback && (
         <div className="fixed inset-x-0 bottom-10 flex justify-center z-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg">
+          <div className="bg-[#c8c8c8] dark:bg-[#27272a] text-black dark:text-white p-4 rounded-lg shadow-lg">
             <p>{submittedFeedback}</p>
           </div>
         </div>
