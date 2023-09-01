@@ -72,9 +72,7 @@ export default function TranscriptComponent({
   const [error, setError] = useState("")
 
   const handleVote = async () => {
-    if (!voted) {
-      alert("You have already voted. Thank you for your participation!")
-    }
+
     try {
       const updatedTranscript = await voteTranscript(id, session.user.id)
       if (!updatedTranscript) {
@@ -353,7 +351,7 @@ export default function TranscriptComponent({
                 className={buttonStyle}
               >
                 <ThickArrowUpIcon className={iconStyle} />
-                {voted ? <span>Voted</span> : <span>Voted</span>}
+                {voted ? <span>Voted</span> : <span>Vote</span>}
               </Button>
               <Button
                 onClick={handleCancelVote}
